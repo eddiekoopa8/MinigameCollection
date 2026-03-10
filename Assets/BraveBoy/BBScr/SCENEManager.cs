@@ -7,82 +7,85 @@ using UnityEngine;
 // using Assets.Scripts;
 using System;
 
-public class SCENEManager
+namespace BBInternal
 {
-    //static bool restarting = false;
-
-    public static void ChangeScene(int id)
+    public class SCENEManager
     {
-        changeScene__(null, id);
-    }
+        //static bool restarting = false;
 
-    public static void ChangeScene(string name)
-    {
-        changeScene__(name, -1);
-    }
-
-    public static void Restart()
-    {
-        //if (!restarting)
+        public static void ChangeScene(int id)
         {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().name, LoadSceneMode.Single);
-            //restarting = true;
+            changeScene__(null, id);
         }
-    }
 
-    public static void ExitGame()
-    {
+        public static void ChangeScene(string name)
+        {
+            changeScene__(name, -1);
+        }
+
+        public static void Restart()
+        {
+            //if (!restarting)
+            {
+                SceneManager.LoadScene(SceneManager.GetActiveScene().name, LoadSceneMode.Single);
+                //restarting = true;
+            }
+        }
+
+        public static void ExitGame()
+        {
 #if UNITY_STANDALONE
-        Application.Quit();
+            Application.Quit();
 #endif
 #if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
+            UnityEditor.EditorApplication.isPlaying = false;
 #endif
-    }
+        }
 
-    static bool verifyScene__(string name)
-    {
-        if (name == null) return true;
-
-        for (var i = 0; i < SceneManager.sceneCountInBuildSettings; i++)
+        static bool verifyScene__(string name)
         {
-            //Debug.Log(SceneUtility.GetScenePathByBuildIndex(i));
-            if (SceneUtility.GetScenePathByBuildIndex(i) == "Assets/" + name + ".unity")
+            if (name == null) return true;
+
+            for (var i = 0; i < SceneManager.sceneCountInBuildSettings; i++)
             {
-                return true;
+                //Debug.Log(SceneUtility.GetScenePathByBuildIndex(i));
+                if (SceneUtility.GetScenePathByBuildIndex(i) == "Assets/" + name + ".unity")
+                {
+                    return true;
+                }
             }
-        }
-        return false;
-    }
-
-    private static void changeScene__(string name, int id)
-    {
-        // GAMEManager.PopStars();
-        if (id == -1 && name == null)
-        {
-            Debug.LogError($"scene arg is missing. please supply them");
-            Debug.Break();
+            return false;
         }
 
-        if (!verifyScene__(name))
+        private static void changeScene__(string name, int id)
         {
-            Debug.LogError($"scene is not found.");
-            Debug.Break();
-        }
-        else
-        {
-            if (id != -1)
+            // GAMEManager.PopStars();
+            if (id == -1 && name == null)
             {
-                SceneManager.LoadScene(id, LoadSceneMode.Single);
+                Debug.LogError($"scene arg is missing. please supply them");
+                Debug.Break();
             }
-            else if (name != null)
+
+            if (!verifyScene__(name))
             {
-                SceneManager.LoadScene(name, LoadSceneMode.Single);
+                Debug.LogError($"scene is not found.");
+                Debug.Break();
             }
             else
             {
-                Debug.LogError($"arg parse err: choose EITHER id or name");
-                Debug.Break();
+                if (id != -1)
+                {
+                    SceneManager.LoadScene(id, LoadSceneMode.Single);
+                }
+                else if (name != null)
+                {
+                    SceneManager.LoadScene(name, LoadSceneMode.Single);
+                }
+                else
+                {
+                    Debug.LogError($"arg parse err: choose EITHER id or name");
+                    Debug.Break();
+                }
             }
         }
     }
