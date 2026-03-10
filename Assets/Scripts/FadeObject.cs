@@ -122,8 +122,14 @@ public class FadeObject : MonoBehaviour
     }
 
     /** PUBLIC FUNCS FOR USER **/
-    public void SetAlpha(float newAlpha)
+
+    public void SetFadeAlpha(float newAlpha)
     {
         FadeAlpha = newAlpha;
+    }
+
+    public float GetFadeAlpha()
+    {
+        return FadeAlpha;
     }
 }
