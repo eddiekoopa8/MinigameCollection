@@ -12,7 +12,7 @@ namespace Core
         [Range(0.0f, 255.0f)]
         public float FadeAlpha = 255f;
 
-        public bool IsRecursive = false;
+        public bool IsRecursive = true;
 
         SpriteRenderer spr_render;
         Image ui_render;
@@ -95,6 +95,16 @@ namespace Core
 
         void Update()
         {
+            if (FadeAlpha < 0)
+            {
+                FadeAlpha = 0;
+            }
+
+            if (FadeAlpha > 255)
+            {
+                FadeAlpha = 255;
+            }
+
             setSprRenderAlpha(spr_render, FadeAlpha);
             setUiRenderAlpha(ui_render, FadeAlpha);
             setTextRenderAlpha(text_render, FadeAlpha);
@@ -114,25 +124,21 @@ namespace Core
                     setTextRenderAlpha(one_of_text_renders, FadeAlpha);
                 }
             }
+
+            DuringFade();
         }
+
+        public virtual void DuringFade()
+        {
+
+        }
+
         void OnDestroy()
         {
             if (IsRecursive)
             {
 
             }
-        }
-
-        /** PUBLIC FUNCS FOR USER **/
-
-        public void SetFadeAlpha(float newAlpha)
-        {
-            FadeAlpha = newAlpha;
-        }
-
-        public float GetFadeAlpha()
-        {
-            return FadeAlpha;
         }
     }
 }
