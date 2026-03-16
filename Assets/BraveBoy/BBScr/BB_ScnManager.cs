@@ -105,6 +105,13 @@ namespace BB
         {
             BBInternal.SCENEManager.Restart();
         }
+        /// <summary>
+        /// Exit game
+        /// </summary>
+        public static void ExitGame()
+        {
+            BBInternal.SCENEManager.ExitGame();
+        }
 
         public void SetCameraPosition(Vector2 vector)
         {
