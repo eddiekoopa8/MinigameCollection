@@ -51,6 +51,22 @@ namespace Core
             cur += Time.deltaTime * 1000;
             limit();
         }
+        public float GetMilliseconds()
+        {
+            return cur;
+        }
+        public int GetSeconds()
+        {
+            return Mathf.RoundToInt(cur / 1000);
+        }
+        public float GetCountdownMilliseconds()
+        {
+            return max - GetMilliseconds();
+        }
+        public int GetCountdownSeconds()
+        {
+            return Mathf.RoundToInt((max - GetMilliseconds()) / 1000);
+        }
         public void FixedTick()
         {
             if (!start)

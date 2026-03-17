@@ -54,8 +54,6 @@ namespace Core
                 text_renders.Add(trans.GetChild(i).GetComponent<TMP_Text>());
                 if (trans.GetChild(i).childCount != 0)
                 {
-                    // unhealthy for stack? yes.
-                    // but I can't think of another way :P
                     getRenderers(trans.GetChild(i));
                 }
             }
