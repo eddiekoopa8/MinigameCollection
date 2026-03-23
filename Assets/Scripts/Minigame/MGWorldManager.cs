@@ -14,13 +14,15 @@ public class MGWorldManager : MonoBehaviour
     GameObject MGRootHandle = null;
     //GameObject MGCamera = null;
     int MGHandleID = -1;
+    Animator NextMGAnim = null;
+    Transform transitionPos = null;
 
     bool isLoadingMG = false;
 
     public FadeObject NextMinigameDialog;
 
     const int MINIGAME_INDEX_START = 2;
-    enum State
+    enum STT
     {
         INIT,
         INTRO,
@@ -30,7 +32,7 @@ public class MGWorldManager : MonoBehaviour
         MINIGAME_RESULT,
         GAME_OVER,
         COMPLETE,
-    } State state = State.INIT; State prevState;
+    } STT state = STT.INIT; STT prevState;
 
     static GameObject getObj(string name, Transform transform)
     {
@@ -135,15 +137,17 @@ public class MGWorldManager : MonoBehaviour
 
     void Start()
     {
-        state = State.INIT;
+        state = STT.INIT;
         prevState = state;
         isLoadingMG = false;
         countdown = new Core.Timer();
         NextMinigameDialog.FadeAlpha = 0;
+        NextMGAnim = GameObject.Find("NextMG_Anim").GetComponent<Animator>();
     }
 
     void Update()
     {
+        transitionPos = GameObject.Find("Transition").transform;
         // Minigame loading loop
         if (loadAsyncComplete())
         {
@@ -152,19 +156,19 @@ public class MGWorldManager : MonoBehaviour
 
         switch (state)
         {
-            case State.INIT:
+            case STT.INIT:
                 {
                     /// TODO
-                    state = State.INTRO;
+                    state = STT.INTRO;
                     break;
                 }
-            case State.INTRO:
+            case STT.INTRO:
                 {
                     /// TODO
-                    state = State.LOAD_FIRST_MINIGAME;
+                    state = STT.LOAD_FIRST_MINIGAME;
                     break;
                 }
-            case State.LOAD_FIRST_MINIGAME:
+            case STT.LOAD_FIRST_MINIGAME:
                 {
                     if (!IsMGLoading() && !HasMGLoaded())
                     {
@@ -175,11 +179,11 @@ public class MGWorldManager : MonoBehaviour
                     if (!IsMGLoading() && HasMGLoaded())
                     {
                         Debug.Log("Loaded!");
-                        state = State.NEXT_MINIGAME;
+                        state = STT.NEXT_MINIGAME;
                     }
                     break;
                 }
-            case State.NEXT_MINIGAME:
+            case STT.NEXT_MINIGAME:
                 {
                     countdown.SetMaximumInSeconds(1);
                     countdown.Tick();
@@ -189,7 +193,15 @@ public class MGWorldManager : MonoBehaviour
                         NextMinigameDialog.FadeAlpha = 0;
                         MGRootHandle.GetComponent<FadeObject>().FadeAlpha = 255;
                         MGRootHandle.GetComponent<MGManager>().MGActive = true;
+                        state = STT.MINIGAME;
+                        MGRootHandle.transform.SetPositionAndRotation(transitionPos.localPosition, transitionPos.localRotation);
+                        NextMGAnim.Play("Main");
                     }
+                    break;
+                }
+            case STT.MINIGAME:
+                {
+                    MGRootHandle.transform.SetPositionAndRotation(new Vector3(transitionPos.localPosition.x + 25, transitionPos.localPosition.y + 25, transitionPos.localPosition.z + 3), transitionPos.localRotation);
                     break;
                 }
         }
@@ -198,7 +210,7 @@ public class MGWorldManager : MonoBehaviour
 
         if (prevState != state)
         {
-            Debug.Log("Switch State: " + prevState + " -> " + state + "\n");
+            Debug.Log("Switch STT: " + prevState + " -> " + state + "\n");
             prevState = state;
         }
     }
