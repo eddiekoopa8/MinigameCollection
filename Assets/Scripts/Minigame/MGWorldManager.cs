@@ -61,7 +61,6 @@ public class MGWorldManager : MonoBehaviour
             Debug.Log("There are no objects in minigame scene. Critical error?");
             return null;
         }
-
         foreach (GameObject rootObj in rootObjs)
         {
             if (rootObj.name == name)
@@ -108,7 +107,7 @@ public class MGWorldManager : MonoBehaviour
         //MGCamera = GetMGObject("MGCam");
         MGRootHandle = GetMGObject("MGRoot");
         MGRootHandle.GetComponent<MGManager>().MGActive = false;
-        MGRootHandle.GetComponent<FadeObject>().FadeAlpha = 0;
+        MGRootHandle.GetComponent<FadeObject>().FadeAlpha = 255;
 
         //MGCamera.SetActive(false);
 
@@ -194,14 +193,14 @@ public class MGWorldManager : MonoBehaviour
                         MGRootHandle.GetComponent<FadeObject>().FadeAlpha = 255;
                         MGRootHandle.GetComponent<MGManager>().MGActive = true;
                         state = STT.MINIGAME;
-                        MGRootHandle.transform.SetPositionAndRotation(transitionPos.localPosition, transitionPos.localRotation);
+                        MGRootHandle.transform.SetPositionAndRotation(new Vector3(transitionPos.position.x, transitionPos.position.y, transitionPos.position.z - 1f), transitionPos.rotation);
                         NextMGAnim.Play("Main");
                     }
                     break;
                 }
             case STT.MINIGAME:
                 {
-                    MGRootHandle.transform.SetPositionAndRotation(new Vector3(transitionPos.localPosition.x + 25, transitionPos.localPosition.y + 25, transitionPos.localPosition.z + 3), transitionPos.localRotation);
+                    MGRootHandle.transform.SetPositionAndRotation(new Vector3(transitionPos.position.x, transitionPos.position.y, transitionPos.position.z -1), transitionPos.rotation);
                     break;
                 }
         }
