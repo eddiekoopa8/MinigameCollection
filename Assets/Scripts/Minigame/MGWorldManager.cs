@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Resources;
 using System.Threading;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 public class MGWorldManager : MonoBehaviour
@@ -17,9 +18,11 @@ public class MGWorldManager : MonoBehaviour
     Animator NextMGAnim = null;
     Transform transitionPos = null;
 
-    bool isLoadingMG = false;
+    const int bombMax = 5;
 
-    public FadeObject NextMinigameDialog;
+    List<Image> bombs = new List<Image>(bombMax);
+
+    bool isLoadingMG = false;
 
     const int MINIGAME_INDEX_START = 2;
     enum STT
@@ -107,7 +110,7 @@ public class MGWorldManager : MonoBehaviour
         //MGCamera = GetMGObject("MGCam");
         MGRootHandle = GetMGObject("MGRoot");
         MGRootHandle.GetComponent<MGManager>().MGActive = false;
-        MGRootHandle.GetComponent<FadeObject>().FadeAlpha = 255;
+        MGRootHandle.GetComponent<FadeObject>().FadeAlpha = 0;
 
         //MGCamera.SetActive(false);
 
@@ -140,13 +143,21 @@ public class MGWorldManager : MonoBehaviour
         prevState = state;
         isLoadingMG = false;
         countdown = new Core.Timer();
-        NextMinigameDialog.FadeAlpha = 0;
         NextMGAnim = GameObject.Find("NextMG_Anim").GetComponent<Animator>();
+
+        for (int i = 0; i < bombMax; i++)
+        {
+            bombs.Add(GameObject.Find("Bomb" + i).GetComponent<Image>());
+        }
+
+        foreach (Image bomb in bombs)
+        {
+            bomb.enabled = false;
+        }
     }
 
     void Update()
     {
-        transitionPos = GameObject.Find("Transition").transform;
         // Minigame loading loop
         if (loadAsyncComplete())
         {
@@ -177,30 +188,31 @@ public class MGWorldManager : MonoBehaviour
 
                     if (!IsMGLoading() && HasMGLoaded())
                     {
+
                         Debug.Log("Loaded!");
+                        countdown.Reset();
+                        countdown.SetMaximumInSeconds(1);
                         state = STT.NEXT_MINIGAME;
                     }
                     break;
                 }
             case STT.NEXT_MINIGAME:
                 {
-                    countdown.SetMaximumInSeconds(1);
                     countdown.Tick();
-                    NextMinigameDialog.FadeAlpha = 255;
                     if (countdown.Reached)
                     {
-                        NextMinigameDialog.FadeAlpha = 0;
-                        MGRootHandle.GetComponent<FadeObject>().FadeAlpha = 255;
-                        MGRootHandle.GetComponent<MGManager>().MGActive = true;
+                        NextMGAnim.Play("_");
                         state = STT.MINIGAME;
-                        MGRootHandle.transform.SetPositionAndRotation(new Vector3(transitionPos.position.x, transitionPos.position.y, transitionPos.position.z - 1f), transitionPos.rotation);
-                        NextMGAnim.Play("Main");
                     }
                     break;
                 }
             case STT.MINIGAME:
                 {
-                    MGRootHandle.transform.SetPositionAndRotation(new Vector3(transitionPos.position.x, transitionPos.position.y, transitionPos.position.z -1), transitionPos.rotation);
+                    if (true)
+                    { 
+                        MGRootHandle.GetComponent<FadeObject>().FadeAlpha = 255;
+                        MGRootHandle.GetComponent<MGManager>().MGActive = true;
+                    }
                     break;
                 }
         }
