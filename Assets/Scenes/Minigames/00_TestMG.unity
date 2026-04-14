@@ -134,7 +134,7 @@ GameObject:
   - component: {fileID: 256149627}
   - component: {fileID: 256149626}
   m_Layer: 0
-  m_Name: WorldCamera
+  m_Name: MGCam
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -240,7 +240,7 @@ Transform:
   m_GameObject: {fileID: 1001065397}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 1}
   m_LocalScale: {x: 1.8, y: 1.8, z: 1.8}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -360,6 +360,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MGActive: 0
+  MGWorld: {fileID: 0}
 --- !u!1 &1331074768
 GameObject:
   m_ObjectHideFlags: 0

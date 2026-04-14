@@ -6,33 +6,48 @@ using System.Threading;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using System.Linq;
+using Unity.VisualScripting;
+using Unity.Loading;
 
 public class MGWorldManager : MonoBehaviour
 {
+    // LOAD
     AsyncOperation MGLoadAsync;
+    AsyncOperation MGUnloadAsync;
+    bool isLoadingMG = false;
+    bool isUnloadingMG = false;
 
+    // MG OBJECTS
     Scene MGSceneHandle;
     GameObject MGRootHandle = null;
-    //GameObject MGCamera = null;
+    Camera MGCamera = null;
     int MGHandleID = -1;
+
+    // ANIMATIONS
     Animator NextMGAnim = null;
-    Transform transitionPos = null;
 
-    const int bombMax = 5;
-
+    // DURING MINIGAME
+    const int bombMax = 6;
     List<Image> bombs = new List<Image>(bombMax);
 
-    bool isLoadingMG = false;
+    // MGManager REQUESTS
+    public enum MG_REQ
+    {
+        WON,
+        LOST,
+        FORCE_TERMINATE
+    }; public MG_REQ Request;
 
-    const int MINIGAME_INDEX_START = 2;
+    const int MINIGAME_INDEX_START = 3;
     enum STT
     {
         INIT,
         INTRO,
-        LOAD_FIRST_MINIGAME,
+        LOAD_MINIGAME,
         NEXT_MINIGAME,
         MINIGAME,
-        MINIGAME_RESULT,
+        AFTER_MINIGAME,
         GAME_OVER,
         COMPLETE,
     } STT state = STT.INIT; STT prevState;
@@ -85,6 +100,10 @@ public class MGWorldManager : MonoBehaviour
     {
         loadMinigame(index);
     }
+    void UnloadCurrentMG()
+    {
+        unloadMinigame(MGHandleID);
+    }
     void loadMinigame(int scnIndex)
     {
         if (MGHandleID == scnIndex)
@@ -98,24 +117,42 @@ public class MGWorldManager : MonoBehaviour
         MGLoadAsync = SceneManager.LoadSceneAsync(MGHandleID, LoadSceneMode.Additive);
         isLoadingMG = true;
     }
+    void unloadMinigame(int scnIndex)
+    {
+        MGRootHandle = null;
+
+        MGUnloadAsync = SceneManager.UnloadSceneAsync(MGHandleID);
+        isUnloadingMG = true;
+    }
     bool loadAsyncComplete()
     {
         return MGLoadAsync != null && MGLoadAsync.isDone;
+    }
+    bool unloadAsyncComplete()
+    {
+        return MGUnloadAsync != null && MGUnloadAsync.isDone;
     }
 
     void finaliseLoad()
     {
         MGSceneHandle = SceneManager.GetSceneByBuildIndex(MGHandleID);
 
-        //MGCamera = GetMGObject("MGCam");
         MGRootHandle = GetMGObject("MGRoot");
         MGRootHandle.GetComponent<MGManager>().MGActive = false;
+        MGRootHandle.GetComponent<MGManager>().MGWorld = this;
         MGRootHandle.GetComponent<FadeObject>().FadeAlpha = 0;
 
-        //MGCamera.SetActive(false);
+        MGCamera = GetMGObject("MGCam").GetComponent<Camera>();
+        MGCamera.enabled = false;
 
         Debug.Log("Minigame " + (MGHandleID - MINIGAME_INDEX_START) + " (" + MGSceneHandle.name + ") loaded!");
         isLoadingMG = false;
+    }
+
+    void finaliseUnload()
+    {
+        Debug.Log("Minigame " + (MGHandleID - MINIGAME_INDEX_START) + " (" + MGSceneHandle.name + ") unloaded!");
+        isUnloadingMG = false;
     }
 
     bool HasMGLoaded()
@@ -128,6 +165,11 @@ public class MGWorldManager : MonoBehaviour
         return isLoadingMG;
     }
 
+    bool IsCurrentMGUnloading()
+    {
+        return isUnloadingMG;
+    }
+
     void appendMGScale(float scale)
     {
         Vector3 v = MGRootHandle.transform.localScale;
@@ -135,14 +177,16 @@ public class MGWorldManager : MonoBehaviour
         MGRootHandle.transform.localScale = v;
     }
 
-    Core.Timer countdown;
+    Core.Timer MainCountdown;
 
     void Start()
     {
+        MGManager.DebuggingMGs = false;
+
         state = STT.INIT;
         prevState = state;
         isLoadingMG = false;
-        countdown = new Core.Timer();
+        MainCountdown = new Core.Timer();
         NextMGAnim = GameObject.Find("NextMG_Anim").GetComponent<Animator>();
 
         for (int i = 0; i < bombMax; i++)
@@ -156,12 +200,31 @@ public class MGWorldManager : MonoBehaviour
         }
     }
 
+    void SetBombFrame(int bI)
+    {
+        for (int i = 0; i < bombMax;i++)
+        {
+            if (i == bI)
+            {
+                bombs.ElementAt(i).enabled = true;
+            }
+            else
+            {
+                bombs.ElementAt(i).enabled = false;
+            }
+        }
+    }
+
     void Update()
     {
         // Minigame loading loop
-        if (loadAsyncComplete())
+        if (loadAsyncComplete() && isLoadingMG)
         {
             finaliseLoad();
+        }
+        if (unloadAsyncComplete() && isUnloadingMG)
+        {
+            finaliseUnload();
         }
 
         switch (state)
@@ -175,10 +238,10 @@ public class MGWorldManager : MonoBehaviour
             case STT.INTRO:
                 {
                     /// TODO
-                    state = STT.LOAD_FIRST_MINIGAME;
+                    state = STT.LOAD_MINIGAME;
                     break;
                 }
-            case STT.LOAD_FIRST_MINIGAME:
+            case STT.LOAD_MINIGAME:
                 {
                     if (!IsMGLoading() && !HasMGLoaded())
                     {
@@ -190,28 +253,49 @@ public class MGWorldManager : MonoBehaviour
                     {
 
                         Debug.Log("Loaded!");
-                        countdown.Reset();
-                        countdown.SetMaximumInSeconds(1);
+                        MainCountdown.Reset();
+                        MainCountdown.SetMaximumInSeconds(1);
                         state = STT.NEXT_MINIGAME;
                     }
                     break;
                 }
             case STT.NEXT_MINIGAME:
                 {
-                    countdown.Tick();
-                    if (countdown.Reached)
+                    MainCountdown.Tick();
+                    if (MainCountdown.Reached)
                     {
+                        MGRootHandle.GetComponent<FadeObject>().FadeAlpha = 255;
+                        MGRootHandle.GetComponent<MGManager>().MGActive = true;
                         NextMGAnim.Play("_");
+
+                        MainCountdown.Reset();
+                        MainCountdown.SetMaximumInSeconds(6);
+
                         state = STT.MINIGAME;
                     }
                     break;
                 }
             case STT.MINIGAME:
                 {
-                    if (true)
-                    { 
-                        MGRootHandle.GetComponent<FadeObject>().FadeAlpha = 255;
-                        MGRootHandle.GetComponent<MGManager>().MGActive = true;
+                    MGRootHandle.GetComponent<FadeObject>().FadeAlpha = 255;
+                    MGRootHandle.GetComponent<MGManager>().MGActive = true;
+
+                    MainCountdown.Tick();
+                    SetBombFrame(MainCountdown.GetSeconds() - 1);
+                    if (MainCountdown.Reached)
+                    {
+                        UnloadCurrentMG();
+                        state = STT.AFTER_MINIGAME;
+                    }
+                    break;
+                }
+            case STT.AFTER_MINIGAME:
+                {
+                    if (!IsCurrentMGUnloading())
+                    {
+
+                        Debug.Log("Unloaded!");
+                        //state = STT.NEXT_MINIGAME;
                     }
                     break;
                 }
