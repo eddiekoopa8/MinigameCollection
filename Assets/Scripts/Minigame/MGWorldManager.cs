@@ -44,7 +44,7 @@ public class MGWorldManager : MonoBehaviour
     {
         INIT,
         INTRO,
-        LOAD_MINIGAME,
+        LOAD_FIRST_MINIGAME,
         NEXT_MINIGAME,
         MINIGAME,
         AFTER_MINIGAME,
@@ -238,10 +238,10 @@ public class MGWorldManager : MonoBehaviour
             case STT.INTRO:
                 {
                     /// TODO
-                    state = STT.LOAD_MINIGAME;
+                    state = STT.LOAD_FIRST_MINIGAME;
                     break;
                 }
-            case STT.LOAD_MINIGAME:
+            case STT.LOAD_FIRST_MINIGAME:
                 {
                     if (!IsMGLoading() && !HasMGLoaded())
                     {
@@ -291,11 +291,24 @@ public class MGWorldManager : MonoBehaviour
                 }
             case STT.AFTER_MINIGAME:
                 {
-                    if (!IsCurrentMGUnloading())
+                    if (IsCurrentMGUnloading())
+                    {
+                        break;
+                    }
+
+                    if (!IsMGLoading() && !HasMGLoaded())
+                    {
+                        Debug.Log("Loading...");
+                        LoadMG(0);
+                    }
+
+                    if (!IsMGLoading() && HasMGLoaded())
                     {
 
-                        Debug.Log("Unloaded!");
-                        //state = STT.NEXT_MINIGAME;
+                        Debug.Log("Loaded!");
+                        MainCountdown.Reset();
+                        MainCountdown.SetMaximumInSeconds(1);
+                        state = STT.NEXT_MINIGAME;
                     }
                     break;
                 }
