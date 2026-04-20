@@ -17,4 +17,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Minigames/01_Spin.unity
     guid: 45dd3898fcb42b847a1a87fccfbd02d6
+  - enabled: 1
+    path: Assets/Scenes/Minigames/02_Tennis.unity
+    guid: b97ab4f7b63dde1418da51191a2ae38d
   m_configObjects: {}

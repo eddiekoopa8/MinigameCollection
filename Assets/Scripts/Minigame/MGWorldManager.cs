@@ -9,6 +9,7 @@ using UnityEngine.SceneManagement;
 using System.Linq;
 using Unity.VisualScripting;
 using Unity.Loading;
+using TMPro;
 
 public class MGWorldManager : MonoBehaviour
 {
@@ -17,6 +18,8 @@ public class MGWorldManager : MonoBehaviour
     AsyncOperation MGUnloadAsync;
     bool isLoadingMG = false;
     bool isUnloadingMG = false;
+    int MGCount = 2;
+    System.Random random;
 
     // MG OBJECTS
     Scene MGSceneHandle;
@@ -26,6 +29,7 @@ public class MGWorldManager : MonoBehaviour
 
     // ANIMATIONS
     Animator NextMGAnim = null;
+    TMP_Text[] NextMGAnimNumber;
 
     // DURING MINIGAME
     const int bombMax = 6;
@@ -38,6 +42,16 @@ public class MGWorldManager : MonoBehaviour
         LOST,
         FORCE_TERMINATE
     }; public MG_REQ Request;
+
+    // UTILS
+    int GetRandom(int max)
+    {
+        return GetRandom(0, max);
+    }
+    int GetRandom(int start,int max)
+    {
+        return start + (random.Next() % max);
+    }
 
     const int MINIGAME_INDEX_START = 3;
     enum STT
@@ -96,9 +110,9 @@ public class MGWorldManager : MonoBehaviour
         return null;
     }
 
-    void LoadMG(int index)
+    void LoadMG()
     {
-        loadMinigame(index);
+        loadMinigame(GetRandom(MGCount));
     }
     void UnloadCurrentMG()
     {
@@ -183,6 +197,8 @@ public class MGWorldManager : MonoBehaviour
     {
         MGManager.DebuggingMGs = false;
 
+        random = new System.Random();
+
         state = STT.INIT;
         prevState = state;
         isLoadingMG = false;
@@ -197,6 +213,22 @@ public class MGWorldManager : MonoBehaviour
         foreach (Image bomb in bombs)
         {
             bomb.enabled = false;
+        }
+
+        NextMGAnimNumber = new TMP_Text[2];
+        for (int i = 0; i < NextMGAnimNumber.Length; i++)
+        {
+            NextMGAnimNumber[i] = GameObject.Find("NextMG_Anim_MGIndex" + i).GetComponent<TMP_Text>();
+        }
+    }
+
+    int MGIndex = 0;
+    void AddMGIndex()
+    {
+        MGIndex++;
+        for (int i = 0; i < NextMGAnimNumber.Length; i++)
+        {
+            NextMGAnimNumber[i].text = MGIndex.ToString();
         }
     }
 
@@ -246,7 +278,7 @@ public class MGWorldManager : MonoBehaviour
                     if (!IsMGLoading() && !HasMGLoaded())
                     {
                         Debug.Log("Loading...");
-                        LoadMG(0);
+                        LoadMG();
                     }
 
                     if (!IsMGLoading() && HasMGLoaded())
@@ -256,6 +288,9 @@ public class MGWorldManager : MonoBehaviour
                         MainCountdown.Reset();
                         MainCountdown.SetMaximumInSeconds(1);
                         state = STT.NEXT_MINIGAME;
+
+                        NextMGAnim.Play("_", -1, 0f);
+                        AddMGIndex();
                     }
                     break;
                 }
@@ -266,7 +301,6 @@ public class MGWorldManager : MonoBehaviour
                     {
                         MGRootHandle.GetComponent<FadeObject>().FadeAlpha = 255;
                         MGRootHandle.GetComponent<MGManager>().MGActive = true;
-                        NextMGAnim.Play("_");
 
                         MainCountdown.Reset();
                         MainCountdown.SetMaximumInSeconds(6);
@@ -299,7 +333,7 @@ public class MGWorldManager : MonoBehaviour
                     if (!IsMGLoading() && !HasMGLoaded())
                     {
                         Debug.Log("Loading...");
-                        LoadMG(0);
+                        LoadMG();
                     }
 
                     if (!IsMGLoading() && HasMGLoaded())
@@ -309,6 +343,9 @@ public class MGWorldManager : MonoBehaviour
                         MainCountdown.Reset();
                         MainCountdown.SetMaximumInSeconds(1);
                         state = STT.NEXT_MINIGAME;
+
+                        NextMGAnim.Play("_", -1, 0f);
+                        AddMGIndex();
                     }
                     break;
                 }
