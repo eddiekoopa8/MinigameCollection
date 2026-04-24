@@ -20,6 +20,7 @@ public class MGWorldManager : MonoBehaviour
     bool isUnloadingMG = false;
     int MGCount = 2;
     System.Random random;
+    int prevIndex = -1;
 
     // MG OBJECTS
     Scene MGSceneHandle;
@@ -112,7 +113,13 @@ public class MGWorldManager : MonoBehaviour
 
     void LoadMG()
     {
-        loadMinigame(GetRandom(MGCount));
+        int index = GetRandom(MGCount);
+        while (index == prevIndex)
+        {
+            index = GetRandom(MGCount);
+        }
+        loadMinigame(index);
+        prevIndex = index;
     }
     void UnloadCurrentMG()
     {
@@ -303,7 +310,7 @@ public class MGWorldManager : MonoBehaviour
                         MGRootHandle.GetComponent<MGManager>().MGActive = true;
 
                         MainCountdown.Reset();
-                        MainCountdown.SetMaximumInSeconds(6);
+                        MainCountdown.SetMaximumInSeconds(8);
 
                         state = STT.MINIGAME;
                     }
@@ -314,6 +321,7 @@ public class MGWorldManager : MonoBehaviour
                     MGRootHandle.GetComponent<FadeObject>().FadeAlpha = 255;
                     MGRootHandle.GetComponent<MGManager>().MGActive = true;
 
+                    MainCountdown.Tick();
                     MainCountdown.Tick();
                     SetBombFrame(MainCountdown.GetSeconds() - 1);
                     if (MainCountdown.Reached)
