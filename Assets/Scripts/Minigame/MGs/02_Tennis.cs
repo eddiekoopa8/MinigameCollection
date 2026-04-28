@@ -42,16 +42,12 @@ public class _02_Tennis : MGManager
         if (Input.GetKey(KeyCode.LeftArrow))
         {
             player1Anim.Play("Move");
-            Vector3 v = player1.velocity;
-            v.x = -SPEED;
-            player1.velocity = v;
+            player1.velocity += Vector3.left * SPEED;
         }
         else if (Input.GetKey(KeyCode.RightArrow))
         {
             player1Anim.Play("Move");
-            Vector3 v = player1.velocity;
-            v.x = SPEED;
-            player1.velocity = v;
+            player1.velocity += Vector3.right * SPEED;
         }
         else
         {
