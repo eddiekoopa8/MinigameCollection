@@ -3,7 +3,8 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - MG10_Stage1_Square
   layers:
   - Default
   - TransparentFX
