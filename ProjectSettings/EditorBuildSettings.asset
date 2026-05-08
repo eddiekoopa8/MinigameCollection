@@ -20,4 +20,13 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Minigames/02_Tennis.unity
     guid: b97ab4f7b63dde1418da51191a2ae38d
+  - enabled: 1
+    path: Assets/Scenes/Minigames/03_Bounce.unity
+    guid: 96a4444d03757974b87d20b4c5a9006f
+  - enabled: 1
+    path: Assets/Scenes/Minigames/04_Sword.unity
+    guid: afc9ea3bee01ad4469f73291d94c2bd9
+  - enabled: 1
+    path: Assets/Scenes/Minigames/10_Final.unity
+    guid: 7dd03250aab7a7547b34d27af0a7fa4c
   m_configObjects: {}

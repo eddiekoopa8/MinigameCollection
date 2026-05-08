@@ -11,7 +11,7 @@ public class _10_Spin : MGManager
     public static bool MGLost;
     public static bool MGWon;
 
-    // Insufficient as hell but it's unfortunately required to get around Unity's fuckass jank
+    // Insufficient as hell but it's unfortunately required to get around Unity's jank hell
     public static GameObject GetPlayer()
     {
         return GameObject.Find("Player");

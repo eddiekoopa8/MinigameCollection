@@ -10,6 +10,7 @@ public class _03_Tennis : MGManager
     SpriteRenderer sprite;
     Rigidbody2D[] enemies;
     static int ENEMY_COUNT = 3;
+    int killed = 0;
     public override void MGStart()
     {
         body = GameObject.Find("Main").GetComponent<Rigidbody2D>();
@@ -19,6 +20,7 @@ public class _03_Tennis : MGManager
         {
             enemies[i] = GameObject.Find("BadGuy"+(i+1)).GetComponent<Rigidbody2D>();
         }
+        killed = 0;
     }
 
     static int XSPEED = 20;
@@ -27,6 +29,10 @@ public class _03_Tennis : MGManager
     public override void MGUpdate()
     {
         foreach (Rigidbody2D enemy in enemies) {
+            if (enemy.IsDestroyed() || !enemy)
+            {
+                continue;
+            }
             if (body.velocity.y == 0 || body.IsTouching(enemy.gameObject.GetComponent<Collider2D>()))
             {
 
@@ -34,6 +40,11 @@ public class _03_Tennis : MGManager
                 v.y = YSPEED;
                 body.velocity = v;
                 //body.velocity = Vector2.up * 40;
+                if (body.IsTouching(enemy.gameObject.GetComponent<Collider2D>()))
+                {
+                    Destroy(enemy.gameObject);
+                    killed++;
+                }
             }
         }
 
@@ -62,10 +73,19 @@ public class _03_Tennis : MGManager
 
         foreach (Rigidbody2D enemy in enemies)
         {
+            if (enemy.IsDestroyed() || !enemy)
+            {
+                continue;
+            }
             if (enemy.velocity.y == 0)
             {
                 enemy.velocity = Vector2.up * 20;
             }
+        }
+
+        if (killed >= ENEMY_COUNT)
+        {
+            Won();
         }
     }
 }
