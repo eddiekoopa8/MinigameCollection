@@ -11,13 +11,16 @@ public class _04_Sword : MGManager
 {
     GameObject player;
     Animator playerAnim;
+
     enum STT_PLAYER
     {
         IDLE,
         WALK,
         ATTACK,
+        ATTACKING,
         DEAD
     }; STT_PLAYER playerState;
+
     enum DIRECTION {
         LEFT,
         RIGHT
@@ -66,7 +69,11 @@ public class _04_Sword : MGManager
             case STT_PLAYER.ATTACK:
                 {
                     playerAnim.Play("attack");
-
+                    playerState = STT_PLAYER.ATTACKING;
+                    break;
+                }
+            case STT_PLAYER.ATTACKING:
+                {
                     // did attack transition to walk?
                     if (!playerAnim.GetCurrentAnimatorStateInfo(0).IsName("attack"))
                     {
@@ -77,7 +84,7 @@ public class _04_Sword : MGManager
         }
 
 
-        if (playerState != STT_PLAYER.ATTACK)
+        if (playerState != STT_PLAYER.ATTACK && playerState != STT_PLAYER.ATTACKING)
         {
             if (Input.GetKey(KeyCode.LeftArrow))
             {
