@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - MG10_Stage1_Square
+  - Enemy
   layers:
   - Default
   - TransparentFX
