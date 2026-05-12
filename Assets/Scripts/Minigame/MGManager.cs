@@ -38,7 +38,15 @@ public class MGManager : MonoBehaviour
 
     public virtual void MGUpdate()
     {
-        
+
+    }
+
+    public void StartAsWon()
+    {
+        if (MGWorld != null)
+        {
+            MGWorld.Request = MGWorldManager.MG_REQ.WON;
+        }
     }
 
     public void Won()
@@ -74,6 +82,34 @@ public class MGManager : MonoBehaviour
             Debug.Log("MGWorldManager received LOST");
         }
     
+        WonOrLost = true;
+    }
+
+    public void WonForce()
+    {
+        if (MGWorld != null)
+        {
+            MGWorld.Request = MGWorldManager.MG_REQ.WON;
+        }
+        else
+        {
+            //Debug.Log("MGWorldManager received WON");
+        }
+
+        WonOrLost = true;
+    }
+
+    public void LostForce()
+    {
+        if (MGWorld != null)
+        {
+            MGWorld.Request = MGWorldManager.MG_REQ.LOST;
+        }
+        else
+        {
+            //Debug.Log("MGWorldManager received LOST");
+        }
+
         WonOrLost = true;
     }
 

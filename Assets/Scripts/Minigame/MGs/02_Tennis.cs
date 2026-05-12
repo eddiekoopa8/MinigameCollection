@@ -13,6 +13,8 @@ public class _02_Tennis : MGManager
     Animator player2Anim;
     public override void MGStart()
     {
+        StartAsWon();
+
         player1 = GameObject.Find("Player1").GetComponent<Rigidbody>();
         player2 = GameObject.Find("Player2").GetComponent<Rigidbody>();
         player1Anim = GameObject.Find("Player1").GetComponent<Animator>();

@@ -6,97 +6,109 @@ namespace Core
 {
     public class SimpleCollisionListener : MonoBehaviour
     {
-        List<Collider2D> Triggered;
-        List<Collider2D> Collided;
+        /* List<*/Collider2D/*>*/ Triggered;
+        /* List<*/Collider2D/*>*/ Collided;
 
-        public Collider2D HasTriggered(string name)
+        public bool HasTriggered(string name)
         {
-            foreach (Collider2D entry in Triggered.ToArray())
+            /*bool r = false;
+            Triggered.ForEach(delegate (Collider2D entry)
             {
                 if (name == entry.name)
                 {
-                    return entry;
+                    r = true;
                 }
-            }
-            return null;
+            });
+            return r;*/
+            return Triggered && Triggered.name == name;
         }
 
-        public Collider2D HasCollided(string name)
+        public bool HasCollided(string name)
         {
-            foreach (Collider2D entry in Collided.ToArray())
-            {
-                if (name == entry.name)
-                {
-                    return entry;
-                }
-            }
-            return null;
+            /* bool r = false;
+             Collided.ForEach(delegate (Collider2D entry)
+             {
+                 if (name == entry.name)
+                 {
+                     r = true;
+                 }
+             });
+             return r;*/
+            return Collided && Collided.name == name;
         }
 
-        public Collider2D Has(string name)
+        public bool Has(string name)
         {
-            Collider2D result = HasTriggered(name);
-            if (result == null)
-            {
-                result = HasCollided(name);
-            }
-            return result;
+            return HasTriggered(name) ? true : HasCollided(name);
         }
 
         private void Start()
         {
-            Triggered = new List<Collider2D>();
-            Collided = new List<Collider2D>();
+            /*Triggered = new List<Collider2D>();
+            Collided = new List<Collider2D>();*/
+            Triggered = null;
+            Collided = null;
+
+            Debug.Log(gameObject.name + " is listening!");
         }
 
         private void OnTriggerEnter2D(Collider2D collider)
         {
-            foreach (Collider2D entry in Triggered.ToArray())
+            /*Triggered.ForEach(delegate (Collider2D entry)
             {
                 if (collider.name == entry.name)
                 {
                     return;
                 }
-            }
+            });
             Debug.Log("touch " + collider.name);
-            Triggered.Add(collider);
+            Triggered.Add(collider);*/
+            Debug.Log("touch " + collider.name);
+            Triggered = collider;
         }
 
         private void OnTriggerExit2D(Collider2D collider)
         {
-            foreach (Collider2D entry in Triggered.ToArray())
+            /*Triggered.ForEach(delegate (Collider2D entry)
             {
                 if (collider.gameObject.GetInstanceID() == entry.gameObject.GetInstanceID())
                 {
+                    Debug.Log("exit " + collider.name);
                     Triggered.Remove(collider);
                 }
-            }
+            });*/
+            Debug.Log("exit " + collider.name);
+            Triggered = null;
         }
 
         private void OnCollisionEnter2D(Collision2D collision)
         {
-            Collider2D collider = collision.collider;
-            foreach (Collider2D entry in Collided.ToArray())
+            /*Collider2D collider = collision.collider;
+            Collided.ForEach(delegate (Collider2D entry)
             {
                 if (collider.name == entry.name)
                 {
                     return;
                 }
-            }
+            });
             Debug.Log("touch " + collider.name);
-            Collided.Add(collider);
+            Collided.Add(collider);*/
+
+            Collided = collision.collider;
         }
 
         private void OnCollisionExit2D(Collision2D collision)
         {
-            Collider2D collider = collision.collider;
-            foreach (Collider2D entry in Collided.ToArray())
+            /*Collider2D collider = collision.collider;
+            Collided.ForEach(delegate (Collider2D entry)
             {
                 if (collider.gameObject.GetInstanceID() == entry.gameObject.GetInstanceID())
                 {
+                    Debug.Log("exit " + collider.name);
                     Collided.Remove(collider);
                 }
-            }
+            });*/
+            Collided = null;
         }
     }
 }

@@ -18,7 +18,7 @@ public class MGWorldManager : MonoBehaviour
     AsyncOperation MGUnloadAsync;
     bool isLoadingMG = false;
     bool isUnloadingMG = false;
-    int MGCount = 4; /* Generally the last number from the scene files */
+    int MGCount = 5; /* Generally the last number from the scene files */
     System.Random random;
     int prevIndex = -1;
     bool LastMinigame = false;
