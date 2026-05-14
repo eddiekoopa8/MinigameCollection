@@ -20,11 +20,16 @@ public class _06_Spotlight : MGManager
         UP = 1,
         DOWN = -1
     }; YDIRECTION guyYDirection;
+    
+    static bool flipX = false;
+    static bool flipY = false;
 
     public override void MGStart()
     {
-        guyXDirection = XDIRECTION.LEFT;
-        guyYDirection = YDIRECTION.DOWN;
+        guyXDirection = !flipX ? XDIRECTION.LEFT : XDIRECTION.RIGHT;
+        guyYDirection = !flipY ? YDIRECTION.DOWN : YDIRECTION.UP;
+        flipX = !flipX;
+        if (flipX) flipY = !flipY;
         spotlight = GameObject.Find("spotlight").GetComponent<Collider2D>();
         guy = GameObject.Find("guy").GetComponent<Rigidbody2D>();
         guyCollider = GameObject.Find("guy").GetComponent<SimpleCollisionListener>();
