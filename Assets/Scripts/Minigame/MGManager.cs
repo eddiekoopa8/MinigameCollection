@@ -49,7 +49,15 @@ public class MGManager : MonoBehaviour
         }
     }
 
-    public void Won()
+    public void StartAsLost()
+    {
+        if (MGWorld != null)
+        {
+            MGWorld.Request = MGWorldManager.MG_REQ.LOST;
+        }
+    }
+
+    public void WonEndMG()
     {
         if (WonOrLost)
         {
@@ -67,7 +75,7 @@ public class MGManager : MonoBehaviour
         WonOrLost = true;
     }
 
-    public void Lost()
+    public void LostEndMG()
     {
         if (WonOrLost)
         {
@@ -84,38 +92,9 @@ public class MGManager : MonoBehaviour
     
         WonOrLost = true;
     }
-
-    public void WonForce()
-    {
-        if (MGWorld != null)
-        {
-            MGWorld.Request = MGWorldManager.MG_REQ.WON;
-        }
-        else
-        {
-            //Debug.Log("MGWorldManager received WON");
-        }
-
-        WonOrLost = true;
-    }
-
-    public void LostForce()
-    {
-        if (MGWorld != null)
-        {
-            MGWorld.Request = MGWorldManager.MG_REQ.LOST;
-        }
-        else
-        {
-            //Debug.Log("MGWorldManager received LOST");
-        }
-
-        WonOrLost = true;
-    }
-
     public void Exit()
     {
-        Debug.Assert(WonOrLost, "MUST CALL Won() OR Lost() FIRST !");
+        Debug.Assert(WonOrLost, "MUST CALL WonEndMG() OR LostEndMG() FIRST !");
         if (MGWorld != null)
         {
             MGWorld.Request = MGWorldManager.MG_REQ.FORCE_TERMINATE;

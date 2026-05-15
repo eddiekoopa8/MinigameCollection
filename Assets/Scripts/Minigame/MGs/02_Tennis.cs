@@ -3,12 +3,16 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using Core;
 
 public class _02_Tennis : MGManager
 {
     Rigidbody ball;
     Rigidbody player1;
     Rigidbody player2;
+    SimpleCollisionListener3D ballCollider;
+    SimpleCollisionListener3D player1Collider;
+    SimpleCollisionListener3D player2Collider;
     Animator player1Anim;
     Animator player2Anim;
     public override void MGStart()
@@ -16,15 +20,15 @@ public class _02_Tennis : MGManager
         StartAsWon();
 
         player1 = GameObject.Find("Player1").GetComponent<Rigidbody>();
-        player2 = GameObject.Find("Player2").GetComponent<Rigidbody>();
+        player1Collider = GameObject.Find("Player1").GetComponent<SimpleCollisionListener3D>();
         player1Anim = GameObject.Find("Player1").GetComponent<Animator>();
-        player2Anim = GameObject.Find("Player2").GetComponent<Animator>();
-        ball = GameObject.Find("Ball").GetComponent<Rigidbody>();
 
-        Vector3 v = ball.velocity;
-        v.z = -5;
-        v.y = 30;
-        ball.velocity = v;
+        player2 = GameObject.Find("Player2").GetComponent<Rigidbody>();
+        player2Collider = GameObject.Find("Player1").GetComponent<SimpleCollisionListener3D>();
+        player2Anim = GameObject.Find("Player2").GetComponent<Animator>();
+
+        ball = GameObject.Find("Ball").GetComponent<Rigidbody>();
+        ballCollider = GameObject.Find("Ball").GetComponent<SimpleCollisionListener3D>();
     }
 
     void SetFakePerspective(Transform transform)
@@ -44,17 +48,23 @@ public class _02_Tennis : MGManager
         if (Input.GetKey(KeyCode.LeftArrow))
         {
             player1Anim.Play("Move");
-            player1.velocity += Vector3.left * SPEED;
+            player1.velocity = Vector3.left * SPEED;
         }
         else if (Input.GetKey(KeyCode.RightArrow))
         {
             player1Anim.Play("Move");
-            player1.velocity += Vector3.right * SPEED;
+            player1.velocity = Vector3.right * SPEED;
         }
         else
         {
             player1Anim.Play("Idle");
             player1.velocity = Vector3.zero;
+        }
+
+        if (ballCollider.Has("Player2"))
+        {
+            ball.transform.position = player2.transform.position;
+            ball.velocity = Vector3.zero; // reset vel
         }
     }
 }

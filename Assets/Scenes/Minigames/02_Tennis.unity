@@ -599,6 +599,7 @@ GameObject:
   - component: {fileID: 840573700}
   - component: {fileID: 840573702}
   - component: {fileID: 840573703}
+  - component: {fileID: 840573704}
   m_Layer: 0
   m_Name: Ball
   m_TagString: Untagged
@@ -615,7 +616,7 @@ Transform:
   m_GameObject: {fileID: 840573698}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 5.35, z: -6.45}
+  m_LocalPosition: {x: -9.8, y: 2.63, z: 6.56}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -715,12 +716,24 @@ SphereCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
   m_Radius: 1.28
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &840573704
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 840573698}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d083e68dd47c55b40b034a1f493bb107, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1116673969
 GameObject:
   m_ObjectHideFlags: 0
@@ -1324,6 +1337,7 @@ GameObject:
   - component: {fileID: 1628806135}
   - component: {fileID: 1628806133}
   - component: {fileID: 1628806134}
+  - component: {fileID: 1628806136}
   m_Layer: 0
   m_Name: Player2
   m_TagString: Untagged
@@ -1419,6 +1433,18 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &1628806136
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1628806131}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d083e68dd47c55b40b034a1f493bb107, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1805029439
 GameObject:
   m_ObjectHideFlags: 0
@@ -1705,6 +1731,7 @@ GameObject:
   - component: {fileID: 2096759555}
   - component: {fileID: 2096759556}
   - component: {fileID: 2096759557}
+  - component: {fileID: 2096759558}
   m_Layer: 0
   m_Name: Player1
   m_TagString: Untagged
@@ -1800,6 +1827,18 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 124
   m_CollisionDetection: 0
+--- !u!114 &2096759558
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2096759553}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d083e68dd47c55b40b034a1f493bb107, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

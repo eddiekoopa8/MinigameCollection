@@ -319,6 +319,8 @@ public class MGWorldManager : MonoBehaviour
                 }
             case STT.NEXT_MINIGAME:
                 {
+                    Cursor.lockState = CursorLockMode.None;
+                    Cursor.visible = true;
                     MainCountdown.Tick();
                     if (MainCountdown.Reached)
                     {
@@ -340,7 +342,7 @@ public class MGWorldManager : MonoBehaviour
 
                     if (!LastMinigame)
                     {
-                        MainCountdown.Tick();
+                        //MainCountdown.Tick();
                         MainCountdown.Tick();
                         SetBombFrame(MainCountdown.GetSeconds() - 1);
                     }

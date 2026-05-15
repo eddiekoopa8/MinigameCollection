@@ -85,7 +85,7 @@ public class _03_Tennis : MGManager
 
         if (killed >= ENEMY_COUNT)
         {
-            Won();
+            WonEndMG();
         }
     }
 }

@@ -70,11 +70,11 @@ public class _10_Spin : MGManager
 
         if (MGLost)
         {
-            Lost();
+            LostEndMG();
         }
         else if (MGWon)
         {
-            Won();
+            WonEndMG();
         }
 
         if (WonOrLost)

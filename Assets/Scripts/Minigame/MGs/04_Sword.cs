@@ -66,7 +66,7 @@ public class _04_Sword : MGManager
     {
         if (killCount >= ENEMY_COUNT)
         {
-            Won();
+            WonEndMG();
         }
         player.transform.localScale = new Vector3(directionsScale[(int)playerDirection], player.transform.localScale.y, player.transform.localScale.z);
         switch (playerState)
@@ -139,7 +139,7 @@ public class _04_Sword : MGManager
             if (enemy.IsTouching(player.GetComponent<Collider2D>()))
             {
                 playerState = STT_PLAYER.DEAD;
-                Lost();
+                LostEndMG();
             }
             else if (enemy.IsTouching(sword.GetComponent<Collider2D>()) && playerState == STT_PLAYER.ATTACKING)
             {

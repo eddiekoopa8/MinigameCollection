@@ -4,10 +4,10 @@ using UnityEngine;
 
 namespace Core
 {
-    public class SimpleCollisionListener : MonoBehaviour
+    public class SimpleCollisionListener3D : MonoBehaviour
     {
-        /* List<*/Collider2D/*>*/ Triggered;
-        /* List<*/Collider2D/*>*/ Collided;
+        /* List<*/Collider/*>*/ Triggered;
+        /* List<*/Collider/*>*/ Collided;
 
         public GameObject GetTriggered()
         {
@@ -62,7 +62,7 @@ namespace Core
             Debug.Log(gameObject.name + " is listening!");
         }
 
-        private void OnTriggerStay2D(Collider2D collider)
+        private void OnTriggerStay(Collider collider)
         {
             /*Triggered.ForEach(delegate (Collider2D entry)
             {
@@ -73,11 +73,11 @@ namespace Core
             });
             Debug.Log("touch " + collider.name);
             Triggered.Add(collider);*/
-            Debug.Log("trigger " + collider.name);
+            Debug.Log(gameObject.name + ": trigger " + collider.name);
             Triggered = collider;
         }
 
-        private void OnTriggerExit2D(Collider2D collider)
+        private void OnTriggerExit(Collider collider)
         {
             /*Triggered.ForEach(delegate (Collider2D entry)
             {
@@ -87,11 +87,11 @@ namespace Core
                     Triggered.Remove(collider);
                 }
             });*/
-            Debug.Log("untrigger " + collider.name);
+            Debug.Log(gameObject.name + ": untrigger " + collider.name);
             Triggered = null;
         }
 
-        private void OnCollisionStay2D(Collision2D collision)
+        private void OnCollisionStay(Collision collision)
         {
             /*Collider2D collider = collision.collider;
             Collided.ForEach(delegate (Collider2D entry)
@@ -103,12 +103,11 @@ namespace Core
             });
             Debug.Log("touch " + collider.name);
             Collided.Add(collider);*/
-
-            Debug.Log("enter " + collision.collider.name);
+            Debug.Log(gameObject.name + ": enter " + collision.collider.name);
             Collided = collision.collider;
         }
 
-        private void OnCollisionExit2D(Collision2D collision)
+        private void OnCollisionExit(Collision collision)
         {
             /*Collider2D collider = collision.collider;
             Collided.ForEach(delegate (Collider2D entry)
@@ -119,7 +118,7 @@ namespace Core
                     Collided.Remove(collider);
                 }
             });*/
-            Debug.Log("exit " + collision.collider.name);
+            Debug.Log(gameObject.name + ": exit " + collision.collider.name);
             Collided = null;
         }
     }

@@ -38,7 +38,7 @@ public class _05_Race : MGManager
 
         if (collider && collider.Has("bad"))
         {
-            Lost();
+            LostEndMG();
         }
     }
 }

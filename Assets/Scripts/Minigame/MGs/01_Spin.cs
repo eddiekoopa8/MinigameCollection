@@ -51,11 +51,11 @@ public class _01_Spin : MGManager
         {
             if (touching)
             {
-                Won();
+                WonEndMG();
             }
             else
             {
-                Lost();
+                LostEndMG();
             }
         }
         else
