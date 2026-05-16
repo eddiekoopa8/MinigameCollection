@@ -47,11 +47,11 @@ public class _06_Spotlight : MGManager
         
         if (guyCollider.Has("spotlight"))
         {
-            StartAsWon();
+            WonMG();
         }
         else
         {
-            StartAsLost();
+            LostMG();
         }
 
         if (guyCollider.Has("up"))

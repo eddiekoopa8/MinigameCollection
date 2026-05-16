@@ -11,7 +11,7 @@ public class _05_Race : MGManager
     public float Speed = 4;
     public override void MGStart()
     {
-        StartAsWon();
+        WonMG();
         road = GameObject.Find("RoadScroll");
         car = GameObject.Find("Car");
         collider = car.GetComponent<SimpleCollisionListener>();

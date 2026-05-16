@@ -41,7 +41,7 @@ public class MGManager : MonoBehaviour
 
     }
 
-    public void StartAsWon()
+    public void WonMG()
     {
         if (MGWorld != null)
         {
@@ -49,7 +49,7 @@ public class MGManager : MonoBehaviour
         }
     }
 
-    public void StartAsLost()
+    public void LostMG()
     {
         if (MGWorld != null)
         {

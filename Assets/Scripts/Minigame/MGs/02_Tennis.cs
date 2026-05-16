@@ -15,9 +15,16 @@ public class _02_Tennis : MGManager
     SimpleCollisionListener3D player2Collider;
     Animator player1Anim;
     Animator player2Anim;
+    
+    enum HitDirection
+    {
+        PLAYER1,
+        PLAYER2,
+    } HitDirection playerDirection;
+
     public override void MGStart()
     {
-        StartAsWon();
+        WonMG();
 
         player1 = GameObject.Find("Player1").GetComponent<Rigidbody>();
         player1Collider = GameObject.Find("Player1").GetComponent<SimpleCollisionListener3D>();
@@ -29,6 +36,12 @@ public class _02_Tennis : MGManager
 
         ball = GameObject.Find("Ball").GetComponent<Rigidbody>();
         ballCollider = GameObject.Find("Ball").GetComponent<SimpleCollisionListener3D>();
+
+        playerDirection = HitDirection.PLAYER2;
+        
+        ball.transform.position = player2.transform.position;
+        
+        WonMG();
     }
 
     void SetFakePerspective(Transform transform)
@@ -38,7 +51,6 @@ public class _02_Tennis : MGManager
     }
 
     static int SPEED = 50;
-
     public override void MGUpdate()
     {
         SetFakePerspective(player1.transform);
@@ -61,10 +73,42 @@ public class _02_Tennis : MGManager
             player1.velocity = Vector3.zero;
         }
 
-        if (ballCollider.Has("Player2"))
+        if ((ballCollider.Has("Player2") && playerDirection == HitDirection.PLAYER2) || (DebuggingMGs && Input.GetKeyDown(KeyCode.R)))
         {
-            ball.transform.position = player2.transform.position;
-            ball.velocity = Vector3.zero; // reset vel
+            Vector3 racketPos = player2.gameObject.FindChild("Racket").transform.position;
+            ball.transform.position = new Vector3(racketPos.x, racketPos.y, racketPos.z);
+            ball.velocity = new Vector3(Unityls.Rand(-5, 5), 7, -15); // new vel
+            playerDirection = HitDirection.PLAYER1;
+        }
+
+        if (ballCollider.Has("Player1") && playerDirection == HitDirection.PLAYER1)
+        {
+            Vector3 racketPos = player1.gameObject.FindChild("Racket").transform.position;
+            ball.transform.position = new Vector3(racketPos.x, racketPos.y, racketPos.z);
+            ball.velocity = new Vector3(Unityls.Rand(-5, 5), 11, 15); // new vel
+            playerDirection = HitDirection.PLAYER2;
+        }
+
+        if (ballCollider.Has("Right"))
+        {
+            ball.velocity = new Vector3(-3, ball.velocity.y, ball.velocity.z);
+        }
+
+        if (ballCollider.Has("Left"))
+        {
+            ball.velocity = new Vector3(3, ball.velocity.y, ball.velocity.z);
+        }
+        
+        if (ballCollider.Has("Lose"))
+        {
+            LostEndMG();
+        }
+
+        if (playerDirection == HitDirection.PLAYER2)
+        {
+            Vector3 pos = Vector3.MoveTowards(player2.transform.position, ball.transform.position, 0.40f);
+            Vector3 curPos = player2.transform.position;
+            player2.transform.position = new Vector3(pos.x, curPos.y, curPos.z);
         }
     }
 }

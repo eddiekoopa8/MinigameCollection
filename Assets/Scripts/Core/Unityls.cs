@@ -22,4 +22,23 @@ public static class Unityls /* shameless pum */
         }
         return null;
     }
+
+    static bool rngCreate = false;
+    static System.Random rand;
+    static public int Rand(int n1, int n2)
+    {
+        int min = n1;
+        int max = n2;
+        if (n1 > n2)
+        {
+            min = n2;
+            max = n1;
+        }
+        if (!rngCreate)
+        {
+            rand = new System.Random();
+            rngCreate = true;
+        }
+        return rand.Next(min, max);
+    }
 }
