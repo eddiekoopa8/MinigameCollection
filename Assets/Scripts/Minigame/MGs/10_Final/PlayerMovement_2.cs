@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class PlayerMovement_2 : BB.PhysicsObject
 {
-    static float speed = 7.5f;
-    static float jumpspeed = 25.0f;
+    static float speed = 15f;
+    static float jumpspeed = 25.5f;
 
     public bool AllowXMovement = false;
     public bool AllowYMovement = false;
