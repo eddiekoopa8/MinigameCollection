@@ -77,7 +77,7 @@ public class _02_Tennis : MGManager
         {
             Vector3 racketPos = player2.gameObject.FindChild("Racket").transform.position;
             ball.transform.position = new Vector3(racketPos.x, racketPos.y, racketPos.z);
-            ball.velocity = new Vector3(Unityls.Rand(-5, 5), 7, -15); // new vel
+            ball.velocity = new Vector3(Unityls.Rand(-7, 7), 7, -15); // new vel
             playerDirection = HitDirection.PLAYER1;
         }
 
@@ -85,7 +85,7 @@ public class _02_Tennis : MGManager
         {
             Vector3 racketPos = player1.gameObject.FindChild("Racket").transform.position;
             ball.transform.position = new Vector3(racketPos.x, racketPos.y, racketPos.z);
-            ball.velocity = new Vector3(Unityls.Rand(-5, 5), 11, 15); // new vel
+            ball.velocity = new Vector3(Unityls.Rand(-7, 7), 11, 15); // new vel
             playerDirection = HitDirection.PLAYER2;
         }
 

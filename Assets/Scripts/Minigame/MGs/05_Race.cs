@@ -15,7 +15,7 @@ public class _05_Race : MGManager
         road = GameObject.Find("RoadScroll");
         car = GameObject.Find("Car");
         collider = car.GetComponent<SimpleCollisionListener>();
-        GameObject.Find("badLayout" + 1).SetActive(true);
+        //GameObject.Find("badLayout" + 1).SetActive(true);
     }
 
     // Update is called once per frame

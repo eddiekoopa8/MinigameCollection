@@ -73,7 +73,7 @@ namespace Core
             });
             Debug.Log("touch " + collider.name);
             Triggered.Add(collider);*/
-            Debug.Log("trigger " + collider.name);
+            //Debug.Log("trigger " + collider.name);
             Triggered = collider;
         }
 
@@ -104,7 +104,7 @@ namespace Core
             Debug.Log("touch " + collider.name);
             Collided.Add(collider);*/
 
-            Debug.Log("enter " + collision.collider.name);
+            //Debug.Log("enter " + collision.collider.name);
             Collided = collision.collider;
         }
 
