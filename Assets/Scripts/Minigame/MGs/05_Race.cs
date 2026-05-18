@@ -8,7 +8,8 @@ public class _05_Race : MGManager
     GameObject road;
     GameObject car;
     new SimpleCollisionListener collider;
-    public float Speed = 4;
+    public float RoadSpeed = 2;
+    public float CarSpeed = 1.75f;
     public override void MGStart()
     {
         WonMG();
@@ -21,19 +22,21 @@ public class _05_Race : MGManager
     // Update is called once per frame
     public override void MGUpdate()
     {
+        float roadSpeed = RoadSpeed * (Time.deltaTime * 10);
+        float carSpeed = CarSpeed * (Time.deltaTime * 10);
         if (WonOrLost)
         {
             return;
         }
-        road.transform.SetPositionAndRotation(road.transform.position + (Vector3.left * (Speed / 10)), road.transform.rotation);
+        road.transform.SetPositionAndRotation(road.transform.position + (Vector3.left * roadSpeed), road.transform.rotation);
 
         if (Input.GetKey(KeyCode.UpArrow))
         {
-            car.transform.SetPositionAndRotation(car.transform.position + (Vector3.up * 0.45f), car.transform.rotation);
+            car.transform.SetPositionAndRotation(car.transform.position + (Vector3.up * carSpeed), car.transform.rotation);
         }
         else if (Input.GetKey(KeyCode.DownArrow))
         {
-            car.transform.SetPositionAndRotation(car.transform.position + (Vector3.down * 0.45f), car.transform.rotation);
+            car.transform.SetPositionAndRotation(car.transform.position + (Vector3.down * carSpeed), car.transform.rotation);
         }
 
         if (collider && collider.Has("bad"))

@@ -5042,6 +5042,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 428759394}
+  - {fileID: 1546162456}
   - {fileID: 1495649787}
   - {fileID: 1746907652}
   - {fileID: 641222672}
@@ -5092,7 +5093,6 @@ Transform:
   - {fileID: 92541947}
   - {fileID: 318540866}
   - {fileID: 114790845}
-  - {fileID: 1546162456}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1116673971
@@ -5124,6 +5124,7 @@ MonoBehaviour:
   MGActive: 0
   MGWorld: {fileID: 0}
   WonOrLost: 0
+  definedSpeed: 22
 --- !u!1 &1142790389
 GameObject:
   m_ObjectHideFlags: 0

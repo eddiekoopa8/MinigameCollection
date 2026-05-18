@@ -60,7 +60,7 @@ public class _01_Spin : MGManager
         }
         else
         { 
-            WheelRotate.Rotate(new Vector3(0, 0, 3));
+            WheelRotate.Rotate(new Vector3(0, 0, Time.deltaTime * 150));
         }
     }
 }

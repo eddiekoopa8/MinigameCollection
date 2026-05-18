@@ -12,6 +12,7 @@ public class _04_Sword : MGManager
     GameObject sword;
     GameObject player;
     Animator playerAnim;
+    Rigidbody2D playerBody;
 
     Rigidbody2D[] enemies;
     static int ENEMY_COUNT = 4;
@@ -52,6 +53,7 @@ public class _04_Sword : MGManager
         playerDirection = DIRECTION.LEFT;
 
         playerAnim = player.GetComponent<Animator>();
+        playerBody = player.GetComponent<Rigidbody2D>();
 
         enemies = new Rigidbody2D[ENEMY_COUNT];
         for (int i = 0; i < ENEMY_COUNT; i++)
@@ -60,7 +62,7 @@ public class _04_Sword : MGManager
         }
     }
 
-    static float MOVE_SPEED = 1.75f;
+    static float MOVE_SPEED = 15;
 
     public override void MGUpdate()
     {
@@ -74,12 +76,14 @@ public class _04_Sword : MGManager
             case STT_PLAYER.IDLE:
                 {
                     playerAnim.Play("idle");
+                    playerBody.velocity = Vector2.zero;
                     break;
                 }
             case STT_PLAYER.WALK:
                 {
                     playerAnim.Play("walk");
-                    player.transform.SetPositionAndRotation(player.transform.position + (directions[(int)playerDirection] * (MOVE_SPEED / 5)), player.transform.rotation);
+                    //player.transform.SetPositionAndRotation(player.transform.position + (directions[(int)playerDirection] * (MoveSpeed / 5)), player.transform.rotation);
+                    playerBody.velocity = new Vector2(MOVE_SPEED * directionsScale[(int)playerDirection], playerBody.velocity.y);
                     break;
                 }
             case STT_PLAYER.ATTACK:
@@ -95,10 +99,12 @@ public class _04_Sword : MGManager
                     {
                         playerState = STT_PLAYER.IDLE;
                     }
+                    playerBody.velocity = Vector2.zero;
                     break;
                 }
             case STT_PLAYER.DEAD:
                 {
+                    playerBody.velocity = Vector2.zero;
                     playerAnim.Play("explode");
                     player.transform.SetPositionAndRotation(player.transform.position + (Vector3.down * 0.225f), player.transform.rotation);
                     return;

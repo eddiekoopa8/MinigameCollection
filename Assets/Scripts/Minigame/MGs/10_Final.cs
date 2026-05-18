@@ -1,3 +1,4 @@
+using Core;
 using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
@@ -16,9 +17,13 @@ public class _10_Spin : MGManager
     {
         return GameObject.Find("Player");
     }
-    public static PlayerCollider GetPlayerCollider()
+    public static SimpleCollisionListener GetPlayerCollider()
     {
-        return GetPlayer().GetComponent<PlayerCollider>();
+        return GetPlayer().GetComponent<SimpleCollisionListener>();
+    }
+    public static PlayerMovement_2 GetPlayerBody()
+    {
+        return GetPlayer().GetComponent<PlayerMovement_2>();
     }
     public class StageBase
     {
@@ -42,13 +47,15 @@ public class _10_Spin : MGManager
         public Stage1() : base()
         {
             obstacles = GameObject.Find("Stage1_obstacles");
+            GetPlayerBody().AllowXMovement = false;
+            GetPlayerBody().AllowYMovement = true;
         }
 
         public override void Update()
         {
-            obstacles.transform.position += Vector3.left * 0.2f;
+            obstacles.transform.position += Vector3.left * (Time.deltaTime * 10);
 
-            if (GetPlayerCollider().Collided && GetPlayerCollider().Collided.CompareTag("MG10_Stage1_Square"))
+            if (GetPlayerCollider().HasTag("MG10_Stage1_Square"))
             {
                 MGLost = true;
             }
@@ -71,18 +78,14 @@ public class _10_Spin : MGManager
         if (MGLost)
         {
             LostEndMG();
-        }
-        else if (MGWon)
-        {
-            WonEndMG();
-        }
-
-        if (WonOrLost)
-        {
             if (GetPlayer())
             {
                 Destroy(GetPlayer());
             }
+        }
+        else if (MGWon)
+        {
+            WonEndMG();
         }
     }
 }

@@ -52,6 +52,39 @@ namespace Core
             return HasTriggered(name) ? true : HasCollided(name);
         }
 
+        public bool HasTriggeredTag(string name)
+        {
+            /*bool r = false;
+            Triggered.ForEach(delegate (Collider2D entry)
+            {
+                if (name == entry.name)
+                {
+                    r = true;
+                }
+            });
+            return r;*/
+            return Triggered && Triggered.CompareTag(name);
+        }
+
+        public bool HasCollidedTag(string name)
+        {
+            /* bool r = false;
+             Collided.ForEach(delegate (Collider2D entry)
+             {
+                 if (name == entry.name)
+                 {
+                     r = true;
+                 }
+             });
+             return r;*/
+            return Collided && Collided.CompareTag(name);
+        }
+
+        public bool HasTag(string name)
+        {
+            return HasTriggeredTag(name) ? true : HasCollidedTag(name);
+        }
+
         private void Start()
         {
             /*Triggered = new List<Collider2D>();

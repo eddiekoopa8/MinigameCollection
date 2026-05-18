@@ -35,20 +35,27 @@ public class _07_Coin : MGManager
         LostMG();
     }
 
+    [SerializeField] float definedSpeed = 12;
+
     // Update is called once per frame
     public override void MGUpdate()
     {
+        guy.velocity = new Vector2(definedSpeed * (int)guyXDirection, definedSpeed * (int)guyYDirection);
+
         if (coins >= COIN_COUNT)
         {
             WonEndMG();
+
+            guyYDirection = YDIRECTION.NONE;
+            guyXDirection = XDIRECTION.NONE;
         }
 
         if (WonOrLost)
         {
             return;
         }
-        guy.transform.SetPositionAndRotation(guy.transform.position + (Vector3.up * (float)((int)guyYDirection) / 2), guy.transform.rotation);
-        guy.transform.SetPositionAndRotation(guy.transform.position + (Vector3.right * (float)((int)guyXDirection) / 2), guy.transform.rotation);
+        /*guy.transform.SetPositionAndRotation(guy.transform.position + (Vector3.up * (float)((int)guyYDirection) / 2), guy.transform.rotation);
+        guy.transform.SetPositionAndRotation(guy.transform.position + (Vector3.right * (float)((int)guyXDirection) / 2), guy.transform.rotation);*/
 
         if (Input.GetKeyDown(KeyCode.UpArrow))
         {
