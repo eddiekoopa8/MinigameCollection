@@ -1122,7 +1122,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '<NAME>
+  m_text: 'Eddie Hill / Koop
 
     Presents...'
   m_isRightToLeft: 0
