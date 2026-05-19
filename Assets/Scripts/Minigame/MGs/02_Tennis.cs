@@ -51,6 +51,13 @@ public class _02_Tennis : MGManager
     }
 
     static int SPEED = 50;
+    public override void MGBeforeUpdate()
+    {
+        if (!MGActive)
+        {
+            ball.transform.position = player2.transform.position;
+        }
+    }
     public override void MGUpdate()
     {
         SetFakePerspective(player1.transform);

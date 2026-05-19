@@ -33,6 +33,12 @@ public class _10_Spin : MGManager
         anim.Play("_", -1, 0);
     }
 
+    public static void InitTextAnm()
+    {
+        Animator anim = GameObject.Find("StageAnim").GetComponent<Animator>();
+        anim.Play("_", -1, 1);
+    }
+
     public class StageBase
     {
         bool active;
@@ -140,17 +146,27 @@ public class _10_Spin : MGManager
 
     Stage1 stage1;
     Stage2 stage2;
+
+    bool started = false;
+
     public override void MGStart()
     {
         playerCollider = GetPlayer().GetComponent<SimpleCollisionListener>();
         stage1 = new Stage1();
         stage2 = new Stage2();
 
-        stage1.Start();
+        InitTextAnm();
+
+        started = false;
     }
 
     public override void MGUpdate()
     {
+        if (!started)
+        {
+            stage1.Start();
+            started = true;
+        }
         if (GetPlayer())
         {
             stage1.Update();

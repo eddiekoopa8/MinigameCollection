@@ -22,7 +22,6 @@ public class MGWorldManager : MonoBehaviour
     System.Random random;
     int prevIndex = -1;
     bool LastMinigame = false;
-    public int LastMinigameIndex = 7;
 
     // MG OBJECTS
     Scene MGSceneHandle;
@@ -32,18 +31,16 @@ public class MGWorldManager : MonoBehaviour
 
     // ANIMATIONS
     Animator NextMGAnim = null;
+    Animator BombAnim = null;
     TMP_Text[] NextMGAnimNumber;
 
-    // DURING MINIGAME
-    const int bombMax = 6;
-    List<Image> bombs = new List<Image>(bombMax);
-
     // MGManager REQUESTS
-    public enum MG_REQ
+    public enum MG_REQ : uint
     {
-        WON,
-        LOST,
-        FORCE_TERMINATE
+        NONE = 0x00,
+        WON = 0x01,
+        LOST = 0x02,
+        FORCE_TERMINATE = 0x04
     }; public MG_REQ Request;
 
     // UTILS
@@ -111,20 +108,6 @@ public class MGWorldManager : MonoBehaviour
         }
 
         return null;
-    }
-    void LoadMG(int index)
-    {
-        loadMinigame(index);
-        prevIndex = index;
-    }
-    void LoadMG()
-    {
-        int index = GetRandom(MGCount);
-        while (index == prevIndex)
-        {
-            index = GetRandom(MGCount);
-        }
-        LoadMG(index);
     }
     void UnloadCurrentMG()
     {
@@ -215,17 +198,12 @@ public class MGWorldManager : MonoBehaviour
         prevState = state;
         isLoadingMG = false;
         MainCountdown = new Core.Timer();
+
         NextMGAnim = GameObject.Find("NextMG_Anim").GetComponent<Animator>();
+        NextMGAnim.Play("_", -1, 1);
 
-        for (int i = 0; i < bombMax; i++)
-        {
-            bombs.Add(GameObject.Find("Bomb" + i).GetComponent<Image>());
-        }
-
-        foreach (Image bomb in bombs)
-        {
-            bomb.enabled = false;
-        }
+        BombAnim = GameObject.Find("BombAnim").GetComponent<Animator>();
+        BombAnim.Play("Count", -1, 1);
 
         NextMGAnimNumber = new TMP_Text[2];
         for (int i = 0; i < NextMGAnimNumber.Length; i++)
@@ -235,39 +213,24 @@ public class MGWorldManager : MonoBehaviour
     }
 
     int MGIndex = 0;
-    void AddMGIndex()
+    void LoadMG()
     {
-        MGIndex++;
-
-        if (MGIndex >= 10)
+        BombAnim.Play("Count", -1, 1);
+        Request = MG_REQ.NONE;
+        if (MGIndex >= 9)
         {
             LastMinigame = true;
         }
-        else
-        {
-            LastMinigame = false;
-        }
-
+        loadMinigame(LastMinigame ? MGIndex : MGIndex++);
         for (int i = 0; i < NextMGAnimNumber.Length; i++)
         {
-            if (!LastMinigame) NextMGAnimNumber[i].text = MGIndex.ToString();
-            else NextMGAnimNumber[i].text = "Final";
+            NextMGAnimNumber[i].text = LastMinigame ? "Final" : MGIndex.ToString();
         }
     }
 
-    void SetBombFrame(int bI)
+    bool BombFinished()
     {
-        for (int i = 0; i < bombMax;i++)
-        {
-            if (i == bI)
-            {
-                bombs.ElementAt(i).enabled = true;
-            }
-            else
-            {
-                bombs.ElementAt(i).enabled = false;
-            }
-        }
+        return BombAnim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1; 
     }
 
     void Update()
@@ -308,12 +271,9 @@ public class MGWorldManager : MonoBehaviour
                     {
 
                         Debug.Log("Loaded!");
-                        MainCountdown.Reset();
-                        MainCountdown.SetMaximumInSeconds(1);
                         state = STT.NEXT_MINIGAME;
 
                         NextMGAnim.Play("_", -1, 0f);
-                        AddMGIndex();
                     }
                     break;
                 }
@@ -321,15 +281,12 @@ public class MGWorldManager : MonoBehaviour
                 {
                     Cursor.lockState = CursorLockMode.None;
                     Cursor.visible = true;
-                    MainCountdown.Tick();
-                    if (MainCountdown.Reached)
+                    if (NextMGAnim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1)
                     {
                         MGRootHandle.GetComponent<FadeObject>().FadeAlpha = 255;
                         MGRootHandle.GetComponent<MGManager>().MGActive = true;
 
-                        MainCountdown.Reset();
-                        MainCountdown.SetMaximumInSeconds(8);
-                        SetBombFrame(MainCountdown.GetSeconds());
+                        if (!LastMinigame) BombAnim.Play("Count", -1, 0);
 
                         state = STT.MINIGAME;
                     }
@@ -340,13 +297,7 @@ public class MGWorldManager : MonoBehaviour
                     MGRootHandle.GetComponent<FadeObject>().FadeAlpha = 255;
                     MGRootHandle.GetComponent<MGManager>().MGActive = true;
 
-                    if (!LastMinigame)
-                    {
-                        //MainCountdown.Tick();
-                        MainCountdown.Tick();
-                        SetBombFrame(MainCountdown.GetSeconds() - 1);
-                    }
-                    if (MainCountdown.Reached)
+                    if ((!LastMinigame && BombFinished()) || Input.GetKeyDown(KeyCode.K) || (Request & MG_REQ.FORCE_TERMINATE) != 0)
                     {
                         UnloadCurrentMG();
                         state = STT.AFTER_MINIGAME;
@@ -364,9 +315,7 @@ public class MGWorldManager : MonoBehaviour
                     {
                         Debug.Log("Loading...");
 
-                        AddMGIndex();
-                        if (!LastMinigame) LoadMG();
-                        else LoadMG(LastMinigameIndex);
+                        LoadMG();
                     }
 
                     if (!IsMGLoading() && HasMGLoaded())

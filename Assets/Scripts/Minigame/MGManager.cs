@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class MGManager : MonoBehaviour
@@ -14,6 +15,9 @@ public class MGManager : MonoBehaviour
 
     public static bool DebuggingMGs = true;
 
+    Core.Timer exitTimer;
+    bool startExitTicking;
+
     void Start()
     {
         if (DebuggingMGs)
@@ -21,6 +25,9 @@ public class MGManager : MonoBehaviour
             MGActive = true;
         }
         MGStart();
+        exitTimer = new Core.Timer();
+        exitTimer.SetMaximumInMilliseconds(1500);
+        startExitTicking = false;
     }
 
     public virtual void MGStart()
@@ -29,9 +36,18 @@ public class MGManager : MonoBehaviour
 
     void Update()
     {
-        if (!MGActive && !DebuggingMGs)
+        MGBeforeUpdate();
+        if (!MGActive)
         {
             return;
+        }
+        if (startExitTicking)
+        {
+            exitTimer.Tick();
+            if (exitTimer.Reached)
+            {
+                MGWorld.Request |= MGWorldManager.MG_REQ.FORCE_TERMINATE;
+            }
         }
         MGUpdate();
     }
@@ -41,11 +57,16 @@ public class MGManager : MonoBehaviour
 
     }
 
+    public virtual void MGBeforeUpdate()
+    {
+
+    }
+
     public void WonMG()
     {
         if (MGWorld != null)
         {
-            MGWorld.Request = MGWorldManager.MG_REQ.WON;
+            MGWorld.Request |= MGWorldManager.MG_REQ.WON;
         }
     }
 
@@ -53,7 +74,7 @@ public class MGManager : MonoBehaviour
     {
         if (MGWorld != null)
         {
-            MGWorld.Request = MGWorldManager.MG_REQ.LOST;
+            MGWorld.Request |= MGWorldManager.MG_REQ.LOST;
         }
     }
 
@@ -65,7 +86,7 @@ public class MGManager : MonoBehaviour
         }
         if (MGWorld != null)
         {
-            MGWorld.Request = MGWorldManager.MG_REQ.WON;
+            MGWorld.Request |= MGWorldManager.MG_REQ.WON;
         }
         else
         {
@@ -73,6 +94,7 @@ public class MGManager : MonoBehaviour
         }
 
         WonOrLost = true;
+        Exit();
     }
 
     public void LostEndMG()
@@ -83,7 +105,7 @@ public class MGManager : MonoBehaviour
         }
         if (MGWorld != null)
         {
-            MGWorld.Request = MGWorldManager.MG_REQ.LOST;
+            MGWorld.Request |= MGWorldManager.MG_REQ.LOST;
         }
         else
         {
@@ -91,13 +113,14 @@ public class MGManager : MonoBehaviour
         }
     
         WonOrLost = true;
+        Exit();
     }
     public void Exit()
     {
         Debug.Assert(WonOrLost, "MUST CALL WonEndMG() OR LostEndMG() FIRST !");
         if (MGWorld != null)
         {
-            MGWorld.Request = MGWorldManager.MG_REQ.FORCE_TERMINATE;
+            startExitTicking = true;
         }
         else
         {
