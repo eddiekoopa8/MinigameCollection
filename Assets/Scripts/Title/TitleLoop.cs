@@ -3,8 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.IO.LowLevel.Unsafe;
 using UnityEngine;
-using UnityEngine.XR;
-
 public class TitleLoop : MonoBehaviour
 {
     public class TitleScn
@@ -113,6 +111,7 @@ public class TitleLoop : MonoBehaviour
                 {
                     titleScene.instance.SetActive(false);
                     mainMenuScene.instance.SetActive(false);
+                    readyScene.instance.SetActive(false);
 
                     // Prepare logo
                     myTimer.SetMaximumInSeconds(4);
