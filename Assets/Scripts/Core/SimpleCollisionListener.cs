@@ -92,7 +92,7 @@ namespace Core
             Triggered = null;
             Collided = null;
 
-            Debug.Log(gameObject.name + " is listening!");
+            //Debug.Log(gameObject.name + " is listening!");
         }
 
         private void OnTriggerStay2D(Collider2D collider)
@@ -120,7 +120,7 @@ namespace Core
                     Triggered.Remove(collider);
                 }
             });*/
-            Debug.Log("untrigger " + collider.name);
+            //Debug.Log("untrigger " + collider.name);
             Triggered = null;
         }
 
@@ -152,7 +152,7 @@ namespace Core
                     Collided.Remove(collider);
                 }
             });*/
-            Debug.Log("exit " + collision.collider.name);
+            //Debug.Log("exit " + collision.collider.name);
             Collided = null;
         }
     }

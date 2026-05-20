@@ -24,8 +24,6 @@ public class _02_Tennis : MGManager
 
     public override void MGStart()
     {
-        WonMG();
-
         player1 = GameObject.Find("Player1").GetComponent<Rigidbody>();
         player1Collider = GameObject.Find("Player1").GetComponent<SimpleCollisionListener3D>();
         player1Anim = GameObject.Find("Player1").GetComponent<Animator>();
@@ -40,8 +38,6 @@ public class _02_Tennis : MGManager
         playerDirection = HitDirection.PLAYER2;
         
         ball.transform.position = player2.transform.position;
-        
-        WonMG();
     }
 
     void SetFakePerspective(Transform transform)

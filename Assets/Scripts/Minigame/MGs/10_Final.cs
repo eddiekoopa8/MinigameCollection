@@ -15,7 +15,7 @@ public class _10_Spin : MGManager
 
     public static SimpleCollisionListener playerCollider;
 
-    // Insufficient as hell but it's unfortunately required to get around Unity's jank hell
+    // Insufficient but it's unfortunately required to get around Unity's jank hell
     public static GameObject GetPlayer()
     {
         return GameObject.Find("Player");

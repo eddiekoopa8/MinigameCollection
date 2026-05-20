@@ -11,7 +11,6 @@ public class _08_Enclose : MGManager
     {
         death = GameObject.Find("Death");
         player = GameObject.Find("Player").GetComponent<SimpleCollisionListener>();
-        WonMG();
     }
 
     public override void MGUpdate()

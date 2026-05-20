@@ -32,7 +32,6 @@ public class _07_Coin : MGManager
         guyYDirection = YDIRECTION.NONE;
         guy = GameObject.Find("guy").GetComponent<Rigidbody2D>();
         guyCollider = GameObject.Find("guy").GetComponent<SimpleCollisionListener>();
-        LostMG();
     }
 
     [SerializeField] float definedSpeed = 12;

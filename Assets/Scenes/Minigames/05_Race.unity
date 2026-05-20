@@ -3702,7 +3702,9 @@ MonoBehaviour:
   MGActive: 0
   MGWorld: {fileID: 0}
   WonOrLost: 0
-  Speed: 5
+  StartRequest: 2
+  RoadSpeed: 2
+  CarSpeed: 1.75
 --- !u!1 &1168067876
 GameObject:
   m_ObjectHideFlags: 0

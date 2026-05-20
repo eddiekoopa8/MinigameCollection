@@ -12,7 +12,6 @@ public class PlayerMovement_2 : BB.PhysicsObject
 
     public override void ActorUpdate()
     {
-        Debug.Log("am ");
         if (Input.GetKey(KeyCode.LeftArrow) && !isLeft && AllowXMovement)
         {
             rigidbody.velocity = new Vector2(-speed, rigidbody.velocity.y);

@@ -22,6 +22,7 @@ public class MGWorldManager : MonoBehaviour
     System.Random random;
     int prevIndex = -1;
     bool LastMinigame = false;
+    bool Completed = false;
 
     // MG OBJECTS
     Scene MGSceneHandle;
@@ -32,25 +33,54 @@ public class MGWorldManager : MonoBehaviour
     // ANIMATIONS
     Animator NextMGAnim = null;
     Animator BombAnim = null;
+    Animator WinLoseAnim = null;
     TMP_Text[] NextMGAnimNumber;
+    TMP_Text[] NextMGAnimDesc;
 
     // MGManager REQUESTS
     public enum MG_REQ : uint
     {
         NONE = 0x00,
-        WON = 0x01,
-        LOST = 0x02,
-        FORCE_TERMINATE = 0x04
-    }; public MG_REQ Request;
+        LOADED = 0x01,
+        WON = 0x02,
+        LOST = 0x04,
+        FORCE_TERMINATE = 0x08
+    }; public MG_REQ Request; public MG_REQ PrevRequest;
+    
+    string[] mgNames;
+    
+    // HEARTS
+    MGHeart[] MGHearts;
+    GameObject MGHeartContainer;
+    //Vector3 MGHeartContainer_oldPos;
+    int MGLives;
+    static int MG_LIVE_COUNT = 3;
 
-    // UTILS
-    int GetRandom(int max)
+    static string reqS(MG_REQ Req)
     {
-        return GetRandom(0, max);
-    }
-    int GetRandom(int start,int max)
-    {
-        return start + (random.Next() % max);
+        // Print flags
+        string result = "";
+        if ((Req & MG_REQ.NONE) != 0)
+        {
+            result += "NONE ";
+        }
+        if ((Req & MG_REQ.LOADED) != 0)
+        {
+            result += "LOADED ";
+        }
+        if ((Req & MG_REQ.WON) != 0)
+        {
+            result += "WON ";
+        }
+        if ((Req & MG_REQ.LOST) != 0)
+        {
+            result += "LOST ";
+        }
+        if ((Req & MG_REQ.FORCE_TERMINATE) != 0)
+        {
+            result += "FORCE_TERMINATE ";
+        }
+        return result;
     }
 
     const int MINIGAME_INDEX_START = 3;
@@ -70,7 +100,7 @@ public class MGWorldManager : MonoBehaviour
     {
         for (int i = 0; i < transform.childCount; i++)
         {
-            Debug.Log(transform.GetChild(i).gameObject.name);
+            //Debug.Log(transform.GetChild(i).gameObject.name);
             if (transform.GetChild(i).gameObject.name == name)
             {
                 return transform.GetChild(i).gameObject;
@@ -100,7 +130,7 @@ public class MGWorldManager : MonoBehaviour
                 return rootObj;
             }
 
-            GameObject found = getObj(name, rootObj.transform);
+            GameObject found = rootObj.FindChild(name);
             if (found != null)
             {
                 return found;
@@ -154,13 +184,15 @@ public class MGWorldManager : MonoBehaviour
         MGCamera = GetMGObject("MGCam").GetComponent<Camera>();
         MGCamera.enabled = false;
 
-        Debug.Log("Minigame " + (MGHandleID - MINIGAME_INDEX_START) + " (" + MGSceneHandle.name + ") loaded!");
+        //Debug.Log("Minigame " + (MGHandleID - MINIGAME_INDEX_START) + " (" + MGSceneHandle.name + ") loaded!");
         isLoadingMG = false;
+        
+        Request = MG_REQ.LOADED;
     }
 
     void finaliseUnload()
     {
-        Debug.Log("Minigame " + (MGHandleID - MINIGAME_INDEX_START) + " (" + MGSceneHandle.name + ") unloaded!");
+        //Debug.Log("Minigame " + (MGHandleID - MINIGAME_INDEX_START) + " (" + MGSceneHandle.name + ") unloaded!");
         isUnloadingMG = false;
     }
 
@@ -199,6 +231,9 @@ public class MGWorldManager : MonoBehaviour
         isLoadingMG = false;
         MainCountdown = new Core.Timer();
 
+        WinLoseAnim = GameObject.Find("WinLose_Anim").GetComponent<Animator>();
+        WinLoseAnim.Play("_", -1, 1);
+
         NextMGAnim = GameObject.Find("NextMG_Anim").GetComponent<Animator>();
         NextMGAnim.Play("_", -1, 1);
 
@@ -210,13 +245,44 @@ public class MGWorldManager : MonoBehaviour
         {
             NextMGAnimNumber[i] = GameObject.Find("NextMG_Anim_MGIndex" + i).GetComponent<TMP_Text>();
         }
+        NextMGAnimDesc = new TMP_Text[2];
+        for (int i = 0; i < NextMGAnimDesc.Length; i++)
+        {
+            NextMGAnimDesc[i] = GameObject.Find("NextMG_Anim_MGDesc" + i).GetComponent<TMP_Text>();
+        }
+        
+        MGHearts = new MGHeart[MG_LIVE_COUNT];
+        for (int i = 0; i < MGHearts.Length; i++)
+        {
+            MGHearts[i] = GameObject.Find("MGHeart" + i).GetComponent<MGHeart>();
+        }
+        
+        Request = MG_REQ.NONE;
+        PrevRequest = Request;
+        
+        MGLives = MG_LIVE_COUNT;
+        
+        MGHeartContainer = GameObject.Find("MGHearts");
+        //MGHeartContainer_oldPos = MGHeartContainer.transform.position;
+
+        // C# 9.0 why do you make me do this
+        mgNames = new string[10];
+        mgNames[0] = "Wheel";
+        mgNames[1] = "Tennis";
+        mgNames[2] = "Jump";
+        mgNames[3] = "Sword";
+        mgNames[4] = "Drive";
+        mgNames[5] = "Follow";
+        mgNames[6] = "Choose";
+        mgNames[7] = "Collect";
+        mgNames[8] = "Hide";
+        mgNames[9] = "Adventure";
     }
 
     int MGIndex = 0;
     void LoadMG()
     {
         BombAnim.Play("Count", -1, 1);
-        Request = MG_REQ.NONE;
         if (MGIndex >= 9)
         {
             LastMinigame = true;
@@ -226,11 +292,38 @@ public class MGWorldManager : MonoBehaviour
         {
             NextMGAnimNumber[i].text = LastMinigame ? "Final" : MGIndex.ToString();
         }
+        for (int i = 0; i < NextMGAnimDesc.Length; i++)
+        {
+            NextMGAnimDesc[i].text = mgNames[LastMinigame ? MGIndex : MGIndex-1];
+        }
     }
 
     bool BombFinished()
     {
         return BombAnim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1; 
+    }
+    
+    void LoseLife()
+    {
+        MGLives--;
+        if (MGLives >= 0 && MGLives < MG_LIVE_COUNT)
+        {
+            MGHearts[MGLives].Kill();
+
+            MGHearts[MGLives] = null;
+        }
+    }
+    
+    void VisibleLives()
+    {
+        //MGHeartContainer.transform.position = MGHeartContainer_oldPos;
+        MGHeartContainer.SetActive(true);
+    }
+    
+    void InvisibleLives()
+    {
+        //MGHeartContainer.transform.position = new Vector3(-5000, -5000, -5000);
+        MGHeartContainer.SetActive(false);
     }
 
     void Update()
@@ -263,17 +356,18 @@ public class MGWorldManager : MonoBehaviour
                 {
                     if (!IsMGLoading() && !HasMGLoaded())
                     {
-                        Debug.Log("Loading...");
+                        //Debug.Log("Loading...");
                         LoadMG();
                     }
 
                     if (!IsMGLoading() && HasMGLoaded())
                     {
 
-                        Debug.Log("Loaded!");
+                        //Debug.Log("Loaded!");
                         state = STT.NEXT_MINIGAME;
 
                         NextMGAnim.Play("_", -1, 0f);
+                        GameObject.Find("Loading").SetActive(false);
                     }
                     break;
                 }
@@ -289,6 +383,7 @@ public class MGWorldManager : MonoBehaviour
                         if (!LastMinigame) BombAnim.Play("Count", -1, 0);
 
                         state = STT.MINIGAME;
+                        InvisibleLives();
                     }
                     break;
                 }
@@ -297,10 +392,34 @@ public class MGWorldManager : MonoBehaviour
                     MGRootHandle.GetComponent<FadeObject>().FadeAlpha = 255;
                     MGRootHandle.GetComponent<MGManager>().MGActive = true;
 
-                    if ((!LastMinigame && BombFinished()) || Input.GetKeyDown(KeyCode.K) || (Request & MG_REQ.FORCE_TERMINATE) != 0)
+#if UNITY_EDITOR
+                    bool debugClick = Input.GetKeyDown(KeyCode.K);
+#else
+                    bool debugClick = false;
+#endif
+                    if ((!LastMinigame && BombFinished()) || debugClick || (Request & MG_REQ.FORCE_TERMINATE) != 0)
                     {
+                        if (debugClick)
+                        {
+                            Request = MG_REQ.WON;
+                        }
                         UnloadCurrentMG();
+                        VisibleLives();
+
+                        if ((Request & MG_REQ.WON) != 0)
+                        {
+                            WinLoseAnim.Play("Won", -1, 0);
+                            if (LastMinigame) Completed = true;
+                        }
+                        else
+                        {
+                            WinLoseAnim.Play("Lost", -1, 0);
+                            LoseLife();
+                        }
+
                         state = STT.AFTER_MINIGAME;
+                        Cursor.lockState = CursorLockMode.None;
+                        Cursor.visible = true;
                     }
                     break;
                 }
@@ -313,19 +432,32 @@ public class MGWorldManager : MonoBehaviour
 
                     if (!IsMGLoading() && !HasMGLoaded())
                     {
-                        Debug.Log("Loading...");
+                        //Debug.Log("Loading...");
 
                         LoadMG();
                     }
 
-                    if (!IsMGLoading() && HasMGLoaded())
+                    if (((!IsMGLoading() && HasMGLoaded()) || Completed) && WinLoseAnim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1)
                     {
-                        Debug.Log("Loaded!");
-                        MainCountdown.Reset();
-                        MainCountdown.SetMaximumInSeconds(1);
-                        state = STT.NEXT_MINIGAME;
+                        
+                        if (Completed)
+                        {
+                            BBInternal.SCENEManager.ChangeScene("Scenes/Complete");
+                        }
+                        else if (MGLives <= 0)
+                        {
+                            BBInternal.SCENEManager.ChangeScene("Scenes/GameOver");
+                        }
+                        else
+                            {
+                            //Debug.Log("Loaded!");
+                            MainCountdown.Reset();
+                            MainCountdown.SetMaximumInSeconds(1);
+                            state = STT.NEXT_MINIGAME;
 
-                        NextMGAnim.Play("_", -1, 0f);
+                            NextMGAnim.Play("_", -1, 0f);
+                            WinLoseAnim.Play("_", -1, 1);
+                        }
                     }
                     break;
                 }
@@ -333,10 +465,16 @@ public class MGWorldManager : MonoBehaviour
 
         //appendMGScale(1);
 
-        if (prevState != state)
+        /*if (prevState != state)
         {
             Debug.Log("Switch STT: " + prevState + " -> " + state + "\n");
             prevState = state;
-        }
+        }*/
+
+        /*if (PrevRequest != Request)
+        {
+            Debug.Log("Send Request " + reqS(Request) + " (prev: " + reqS(PrevRequest) + ")\n");
+            PrevRequest = Request;
+        }*/
     }
 }

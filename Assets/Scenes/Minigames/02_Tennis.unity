@@ -1117,6 +1117,7 @@ MonoBehaviour:
   MGActive: 0
   MGWorld: {fileID: 0}
   WonOrLost: 0
+  StartRequest: 2
 --- !u!1 &1146365345
 GameObject:
   m_ObjectHideFlags: 0
