@@ -1,3 +1,6 @@
+#define DISABLE
+#if !DISABLE
+
 // Select how you would like to handle unreadable textures by uncommenting one of the following #define statements:
 
 // If a texture is unreadable then use the asset loader to locate the file within the assets folder and read the pixel data directly from the file with System.IO. This option is recommended because it always works, however it can be quite slow because loading the image from disk each time takes a while.
@@ -1126,3 +1129,5 @@ public static class PixelTracingDebugger
     }
 }
 */
+
+#endif
