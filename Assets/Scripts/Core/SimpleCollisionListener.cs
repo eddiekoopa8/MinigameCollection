@@ -120,7 +120,7 @@ namespace Core
                     Triggered.Remove(collider);
                 }
             });*/
-            //Debug.Log("untrigger " + collider.name);
+            Debug.Log("untrigger " + collider.name);
             Triggered = null;
         }
 
@@ -152,7 +152,7 @@ namespace Core
                     Collided.Remove(collider);
                 }
             });*/
-            //Debug.Log("exit " + collision.collider.name);
+            Debug.Log("exit " + collision.collider.name);
             Collided = null;
         }
     }

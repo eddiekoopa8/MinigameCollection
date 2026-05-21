@@ -139,7 +139,7 @@ public class MGManager : MonoBehaviour
         }
         else
         {
-            Debug.Log("MGWorldManager received TERMINATE");
+            //Debug.Log("MGWorldManager received TERMINATE");
         }
     }
 }

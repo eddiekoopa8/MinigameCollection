@@ -6,6 +6,7 @@ TagManager:
   tags:
   - MG10_Stage1_Square
   - Enemy
+  - Weapon
   layers:
   - Default
   - TransparentFX
