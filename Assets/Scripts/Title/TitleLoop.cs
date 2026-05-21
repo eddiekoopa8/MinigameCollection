@@ -131,6 +131,7 @@ public class TitleLoop : MonoBehaviour
                         titleScene.fader.FadeIn(5);
 
                         state = STATE.LOGO_TO_TITLE;
+                        GameObject.Find("Music").GetComponent<AudioSource>().Play();
                     }
                     break;
                 }

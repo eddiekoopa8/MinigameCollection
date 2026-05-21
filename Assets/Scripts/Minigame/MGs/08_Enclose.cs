@@ -18,6 +18,7 @@ public class _08_Enclose : MGManager
         if (player.Has("Death"))
         {
             Destroy(player.gameObject);
+            PlayMGWorldSound("PlayerDie");
             LostEndMG();
         }
 

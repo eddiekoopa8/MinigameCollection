@@ -63,6 +63,8 @@ public class _04_Sword : MGManager
     }
 
     static float MOVE_SPEED = 15;
+    
+    bool playedSnd = false;
 
     public override void MGUpdate()
     {
@@ -107,6 +109,11 @@ public class _04_Sword : MGManager
                     playerBody.velocity = Vector2.zero;
                     playerAnim.Play("explode");
                     player.transform.SetPositionAndRotation(player.transform.position + (Vector3.down * 0.225f), player.transform.rotation);
+                    if (!playedSnd)
+                    {
+                        PlayMGWorldSound("PlayerDie");
+                        playedSnd = true;
+                    }
                     return;
                 }
         }
@@ -151,6 +158,7 @@ public class _04_Sword : MGManager
             {
                 Destroy(enemy.gameObject);
                 killCount++;
+                PlayMGWorldSound("CrateHit");
                 continue;
             }
         }

@@ -5124,7 +5124,8 @@ MonoBehaviour:
   MGActive: 0
   MGWorld: {fileID: 0}
   WonOrLost: 0
-  definedSpeed: 22
+  StartRequest: 0
+  definedSpeed: 23.5
 --- !u!1 &1142790389
 GameObject:
   m_ObjectHideFlags: 0

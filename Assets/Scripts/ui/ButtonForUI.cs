@@ -9,11 +9,15 @@ public class ButtonForUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHan
     static float clickEnd = 1f;
     bool clicking = false;
     bool clicked = false;
+    AudioSource hoverSnd;
+    AudioSource clickSnd;
 
     public bool HasClicked {  get { return clicked;  } }
     void Start()
     {
         anim = GetComponent<Animator>();
+        hoverSnd = gameObject.FindChild("HoverSound").GetComponent<AudioSource>();
+        clickSnd = gameObject.FindChild("ClickSound").GetComponent<AudioSource>();
     }
 
     void Update()
@@ -35,6 +39,7 @@ public class ButtonForUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHan
     {
         if (clicking) return;
         //Debug.Log("Click button!");
+        clickSnd.Play();
         anim.Play("Click", -1, 0);
     }
 
@@ -42,6 +47,7 @@ public class ButtonForUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHan
     {
         if (clicking) return;
         //Debug.Log("enter!");
+        hoverSnd.Play();
         anim.Play("In", -1, 0);
     }
 

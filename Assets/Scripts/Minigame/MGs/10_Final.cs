@@ -284,6 +284,7 @@ public class _10_Spin : MGManager
             LostEndMG();
             if (GetPlayer())
             {
+                PlayMGWorldSound("PlayerDie");
                 Destroy(GetPlayer());
             }
         }

@@ -130,6 +130,7 @@ public class MGManager : MonoBehaviour
         WonOrLost = true;
         Exit();
     }
+
     public void Exit()
     {
         Debug.Assert(WonOrLost, "MUST CALL WonEndMG() OR LostEndMG() FIRST !");
@@ -140,6 +141,14 @@ public class MGManager : MonoBehaviour
         else
         {
             //Debug.Log("MGWorldManager received TERMINATE");
+        }
+    }
+
+    public void PlayMGWorldSound(string name)
+    {
+        if (MGWorld != null)
+        {
+            MGWorld.PlaySound(name);
         }
     }
 }

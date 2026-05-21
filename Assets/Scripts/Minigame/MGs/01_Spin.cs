@@ -51,10 +51,12 @@ public class _01_Spin : MGManager
         {
             if (touching)
             {
+                PlayMGWorldSound("PickupCoin");
                 WonEndMG();
             }
             else
             {
+                PlayMGWorldSound("HitHurt");
                 LostEndMG();
             }
         }

@@ -43,6 +43,7 @@ public class _03_Tennis : MGManager
                 if (body.IsTouching(enemy.gameObject.GetComponent<Collider2D>()))
                 {
                     Destroy(enemy.gameObject);
+                    PlayMGWorldSound("EnemyHit");
                     killed++;
                 }
             }

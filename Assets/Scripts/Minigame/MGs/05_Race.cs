@@ -40,6 +40,7 @@ public class _05_Race : MGManager
 
         if (collider && collider.Has("bad"))
         {
+            PlayMGWorldSound("CrateHit");
             LostEndMG();
         }
     }

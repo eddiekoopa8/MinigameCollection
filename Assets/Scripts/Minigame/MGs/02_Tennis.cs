@@ -82,6 +82,8 @@ public class _02_Tennis : MGManager
             ball.transform.position = new Vector3(racketPos.x, racketPos.y, racketPos.z);
             ball.velocity = new Vector3(Unityls.Rand(-7, 7), 7, -15); // new vel
             playerDirection = HitDirection.PLAYER1;
+            PlayMGWorldSound("EnemyHit");
+            PlayMGWorldSound("Jump");
         }
 
         if (ballCollider.Has("Player1") && playerDirection == HitDirection.PLAYER1)
@@ -90,6 +92,8 @@ public class _02_Tennis : MGManager
             ball.transform.position = new Vector3(racketPos.x, racketPos.y, racketPos.z);
             ball.velocity = new Vector3(Unityls.Rand(-7, 7), 11, 15); // new vel
             playerDirection = HitDirection.PLAYER2;
+            PlayMGWorldSound("EnemyHit");
+            PlayMGWorldSound("Jump");
         }
 
         if (ballCollider.Has("Right"))

@@ -36,6 +36,8 @@ public class MGWorldManager : MonoBehaviour
     Animator WinLoseAnim = null;
     TMP_Text[] NextMGAnimNumber;
     TMP_Text[] NextMGAnimDesc;
+    
+    GameObject tempSounds;
 
     // MGManager REQUESTS
     public enum MG_REQ : uint
@@ -219,6 +221,11 @@ public class MGWorldManager : MonoBehaviour
     }
 
     Core.Timer MainCountdown;
+    
+    public void PlaySound(string name)
+    {
+        tempSounds.FindChild(name).GetComponent<AudioSource>().Play();
+    }
 
     void Start()
     {
@@ -277,6 +284,8 @@ public class MGWorldManager : MonoBehaviour
         mgNames[7] = "Collect";
         mgNames[8] = "Hide";
         mgNames[9] = "Adventure";
+        
+        tempSounds = GameObject.Find("ColinBBSound");
     }
 
     int MGIndex = 0;
@@ -410,11 +419,13 @@ public class MGWorldManager : MonoBehaviour
                         {
                             WinLoseAnim.Play("Won", -1, 0);
                             if (LastMinigame) Completed = true;
+                            PlaySound("MGWon");
                         }
                         else
                         {
                             WinLoseAnim.Play("Lost", -1, 0);
                             LoseLife();
+                            PlaySound("MGLost");
                         }
 
                         state = STT.AFTER_MINIGAME;

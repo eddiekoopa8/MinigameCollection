@@ -82,6 +82,7 @@ public class _07_Coin : MGManager
         {
             Destroy(guyCollider.GetTriggered());
             coins++;
+            PlayMGWorldSound("PickupCoin");
         }
     }
 }
