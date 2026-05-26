@@ -15,20 +15,25 @@ public class _05_Race : MGManager
         road = GameObject.Find("RoadScroll");
         car = GameObject.Find("Car");
         collider = car.GetComponent<SimpleCollisionListener>();
+
+        // scrapped :(
         //GameObject.Find("badLayout" + 1).SetActive(true);
     }
 
     // Update is called once per frame
     public override void MGUpdate()
     {
+        // calculate speed
         float roadSpeed = RoadSpeed * (Time.deltaTime * 10);
         float carSpeed = CarSpeed * (Time.deltaTime * 10);
         if (WonOrLost)
         {
             return;
         }
+        // TODO: replace these SetPositionAndRotation's with changing rigidbody velocity
         road.transform.SetPositionAndRotation(road.transform.position + (Vector3.left * roadSpeed), road.transform.rotation);
 
+        // Movement depending on arrow keys
         if (Input.GetKey(KeyCode.UpArrow))
         {
             car.transform.SetPositionAndRotation(car.transform.position + (Vector3.up * carSpeed), car.transform.rotation);
@@ -38,6 +43,7 @@ public class _05_Race : MGManager
             car.transform.SetPositionAndRotation(car.transform.position + (Vector3.down * carSpeed), car.transform.rotation);
         }
 
+        // lose if we touch bad
         if (collider && collider.Has("bad"))
         {
             PlayMGWorldSound("CrateHit");
