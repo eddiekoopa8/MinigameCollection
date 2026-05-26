@@ -27,10 +27,14 @@ public class MGManager : MonoBehaviour
         {
             MGActive = true;
         }
+        // Init minigame
         MGStart();
+
+        // setup timers
         exitTimer = new Core.Timer();
         exitTimer.SetMaximumInMilliseconds(1500);
         startExitTicking = false;
+
         loadedMG = false;
     }
 
@@ -40,6 +44,8 @@ public class MGManager : MonoBehaviour
 
     void Update()
     {
+        // Set start request when minigame is activated
+        // (i hate world code)
         if (MGWorld != null)
         {
             if (!loadedMG)
@@ -49,19 +55,23 @@ public class MGManager : MonoBehaviour
                 loadedMG = true;
             }
         }
+        // Global update
         MGBeforeUpdate();
         if (!MGActive)
         {
             return;
         }
+        // If we exited, add a delay
         if (startExitTicking)
         {
             exitTimer.Tick();
+            // after the delay, exit.
             if (exitTimer.Reached)
             {
                 MGWorld.Request |= MGWorldManager.MG_REQ.FORCE_TERMINATE;
             }
         }
+        // Active update
         MGUpdate();
     }
 
@@ -95,6 +105,7 @@ public class MGManager : MonoBehaviour
 
     public void WonEndMG()
     {
+        // only once
         if (WonOrLost)
         {
             return;
@@ -114,6 +125,7 @@ public class MGManager : MonoBehaviour
 
     public void LostEndMG()
     {
+        // only once
         if (WonOrLost)
         {
             return;
