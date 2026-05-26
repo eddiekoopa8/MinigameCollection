@@ -9,6 +9,7 @@ namespace Core
 {
     public class FadeObject : MonoBehaviour
     {
+        // make it a slider
         [Range(0.0f, 255.0f)]
         public float FadeAlpha = 255f;
 
@@ -26,19 +27,23 @@ namespace Core
 
         void Start()
         {
+            // Get components of main object
             spr_render = GetComponent<SpriteRenderer>();
             ui_render = GetComponent<Image>();
             text_render = GetComponent<TMP_Text>();
 
+            // Prep
             spr_renders = new List<SpriteRenderer>();
             ui_renders = new List<Image>();
             text_renders = new List<TMP_Text>();
 
+            // Get every child of the object
             for (int i = 0; i < transform.childCount; i++)
             {
                 transform.GetChild(i);
             }
 
+            // if we are doing a recursive fade, use the childs too! Get their renderers.
             if (IsRecursive)
             {
                 getRenderers(transform);
@@ -66,7 +71,7 @@ namespace Core
             if (rend != null)
             {
                 Color t = rend.color;
-                t.a = FadeAlpha / 255;
+                t.a = FadeAlpha / 255; /// convert 0-255 to 0-1
                 rend.color = t;
             }
         }
@@ -76,7 +81,7 @@ namespace Core
             if (rend != null)
             {
                 Color t = rend.color;
-                t.a = FadeAlpha / 255;
+                t.a = FadeAlpha / 255; // convert 0-255 to 0-1
                 rend.color = t;
             }
         }
@@ -86,29 +91,32 @@ namespace Core
             if (rend != null)
             {
                 Color t = rend.color;
-                t.a = FadeAlpha / 255;
+                t.a = FadeAlpha / 255; // convert 0-255 to 0-1
                 rend.color = t;
             }
         }
 
         void Update()
         {
+            // Limit alpha
             if (FadeAlpha < 0)
             {
                 FadeAlpha = 0;
             }
-
             if (FadeAlpha > 255)
             {
                 FadeAlpha = 255;
             }
 
+            // Set alpha for the renderers
             setSprRenderAlpha(spr_render, FadeAlpha);
             setUiRenderAlpha(ui_render, FadeAlpha);
             setTextRenderAlpha(text_render, FadeAlpha);
 
+            // For recursive
             if (IsRecursive)
             {
+                // Set renderer alphas for the children
                 foreach (SpriteRenderer one_of_spr_renders in spr_renders)
                 {
                     setSprRenderAlpha(one_of_spr_renders, FadeAlpha);
@@ -123,6 +131,7 @@ namespace Core
                 }
             }
 
+            // Custom override function for update (as it's already taken by this class)
             DuringFade();
         }
 
@@ -131,6 +140,7 @@ namespace Core
 
         }
 
+        // when starting to implement this, I then thought what is the point
         void OnDestroy()
         {
             if (IsRecursive)
