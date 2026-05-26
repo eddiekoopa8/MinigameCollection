@@ -5,7 +5,8 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.U2D;
 
-// inspired by some submission in devil may cry
+// inspired by some submission in devil may cry ;)
+// partially derived form minigame 3
 
 public class _04_Sword : MGManager
 {
@@ -55,6 +56,7 @@ public class _04_Sword : MGManager
         playerAnim = player.GetComponent<Animator>();
         playerBody = player.GetComponent<Rigidbody2D>();
 
+        // get enemies
         enemies = new Rigidbody2D[ENEMY_COUNT];
         for (int i = 0; i < ENEMY_COUNT; i++)
         {
@@ -68,37 +70,46 @@ public class _04_Sword : MGManager
 
     public override void MGUpdate()
     {
+        // we won if we killed them all!
         if (killCount >= ENEMY_COUNT)
         {
             WonEndMG();
         }
+        
         player.transform.localScale = new Vector3(directionsScale[(int)playerDirection], player.transform.localScale.y, player.transform.localScale.z);
         switch (playerState)
         {
             case STT_PLAYER.IDLE:
                 {
+                    // cool animationm and no speed
                     playerAnim.Play("idle");
                     playerBody.velocity = Vector2.zero;
                     break;
                 }
             case STT_PLAYER.WALK:
                 {
+                    // Walking animation
                     playerAnim.Play("walk");
+
+                    // movement
+                    // (uses velocity now to make sure its accurate for delta time)
                     //player.transform.SetPositionAndRotation(player.transform.position + (directions[(int)playerDirection] * (MoveSpeed / 5)), player.transform.rotation);
                     playerBody.velocity = new Vector2(MOVE_SPEED * directionsScale[(int)playerDirection], playerBody.velocity.y);
                     break;
                 }
             case STT_PLAYER.ATTACK:
                 {
+                    // start attack animation
                     playerAnim.Play("attack");
                     playerState = STT_PLAYER.ATTACKING;
                     break;
                 }
             case STT_PLAYER.ATTACKING:
                 {
-                    // did attack transition to walk?
+                    // did attack animation stop?
                     if (!playerAnim.GetCurrentAnimatorStateInfo(0).IsName("attack"))
                     {
+                        // backt to idle.
                         playerState = STT_PLAYER.IDLE;
                     }
                     playerBody.velocity = Vector2.zero;
@@ -106,8 +117,13 @@ public class _04_Sword : MGManager
                 }
             case STT_PLAYER.DEAD:
                 {
+                    // Reset speed
                     playerBody.velocity = Vector2.zero;
+
+                    // ...explode?
                     playerAnim.Play("explode");
+
+                    // Move position down to hide the fact the animation does stop at some point
                     player.transform.SetPositionAndRotation(player.transform.position + (Vector3.down * 0.225f), player.transform.rotation);
                     if (!playedSnd)
                     {
@@ -117,9 +133,11 @@ public class _04_Sword : MGManager
                     return;
                 }
         }
-        
+
+        // Movement when we arent attacking
         if (playerState != STT_PLAYER.ATTACK && playerState != STT_PLAYER.ATTACKING)
         {
+            // Move with arrow keys
             if (Input.GetKey(KeyCode.LeftArrow))
             {
                 playerState = STT_PLAYER.WALK;
@@ -130,17 +148,20 @@ public class _04_Sword : MGManager
                 playerState = STT_PLAYER.WALK;
                 playerDirection = DIRECTION.RIGHT;
             }
+            // Not moving
             else
             {
                 playerState = STT_PLAYER.IDLE;
             }
         }
 
+        // Pressed attack button
         if (Input.GetKeyDown(KeyCode.Space))
         {
             playerState = STT_PLAYER.ATTACK;
         }
 
+        // For enemies
         foreach (Rigidbody2D enemy in enemies)
         {
             if (enemy.IsDestroyed() || !enemy)
@@ -149,15 +170,17 @@ public class _04_Sword : MGManager
             }
             enemy.transform.position = Vector3.MoveTowards(enemy.transform.position, GameObject.FindWithTag("Player").transform.position, 0.10f);
 
+            // If enemy is touching player, kill player
             if (enemy.IsTouching(player.GetComponent<Collider2D>()))
             {
                 playerState = STT_PLAYER.DEAD;
                 LostEndMG();
             }
+            // If enemy is touching sword while player is attacking, kill enemy
             else if (enemy.IsTouching(sword.GetComponent<Collider2D>()) && playerState == STT_PLAYER.ATTACKING)
             {
                 Destroy(enemy.gameObject);
-                killCount++;
+                killCount++; // got one!
                 PlayMGWorldSound("CrateHit");
                 continue;
             }
