@@ -59,40 +59,55 @@ public class TerryMovement : BB.PhysicsObject
 
     public override void ActorUpdate()
     {
+        // no health?
         if (health <= 0)
         {
+            // dead!
             dead = true;
         }
         if (dead)
         {
+            // flash head
             render.enabled = !render.enabled;
+            // move down
             rigidbody.velocity = new Vector2(0, -8);
+            // off screen?
             if (transform.position.y <= DEATH_Y_POS)
             {
+                // die
                 Destroy(gameObject);
             }
             return;
         }
+        // hit by weapon?
         if ((collider.Has("Weapon") || Input.GetKeyDown(KeyCode.D)) && !damaged)
         {
             Debug.Log("damage");
+            // we took damage, minus health.
             health--;
+            // stunned state
             damaged = true;
             chargeGoBack = true;
             charging = false;
         }
         if (damaged)
         {
+            // flash head
             render.enabled = !render.enabled;
+            // STOP!
             rigidbody.velocity = Vector2.zero;
             invTimer.Tick();
+            // this is annoying
             //timer.Tick();
+
+            // stopped being stunned
             if (invTimer.Reached)
             {
                 invTimer.Reset();
                 damaged = false;
                 render.enabled = true;
 
+                // suprise charge!
                 chargeGoBack = false;
                 charging = true;
                 timer.Reset();
@@ -101,9 +116,11 @@ public class TerryMovement : BB.PhysicsObject
         //charging = Input.GetKey(KeyCode.C) && transform.gameObject.enabled;
         if (charging)
         {
+            // follow old player position
             transform.position = Vector3.MoveTowards(transform.position, targetPosition, 0.28f);
             if (Mathf.Abs(targetPosition.sqrMagnitude - transform.position.sqrMagnitude) < 0.01)
             {
+                // reached to the old player position? go back up
                 charging = false;
                 chargeGoBack = true;
             }
@@ -113,6 +130,7 @@ public class TerryMovement : BB.PhysicsObject
             rigidbody.velocity = new Vector2(0, 8);
             if (transform.position.y >= 6)
             {
+                // back up? go back to floating
                 chargeGoBack = false;
             }
         }
@@ -120,6 +138,7 @@ public class TerryMovement : BB.PhysicsObject
         {
             timer.Tick();
             rigidbody.velocity = new Vector2(speed, 0);
+            // zigzag pattern
             if (isLeft)
             {
                 speed = MOVE_SPEED;
@@ -128,9 +147,11 @@ public class TerryMovement : BB.PhysicsObject
             {
                 speed = -MOVE_SPEED;
             }
-            
+
+            // floated around for a bit?
             if (timer.Reached)
             {
+                // CHARRGE
                 timer.Reset();
                 if (followTransform != null) targetPosition = followTransform.position;
                 chargeGoBack = false;
