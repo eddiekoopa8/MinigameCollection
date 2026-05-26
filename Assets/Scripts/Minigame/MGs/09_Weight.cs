@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// the rest is in the exclusive script fole]der
+
 public class _09_Weight : MGManager
 {
     HeavyItemWeight heavyBowl;
@@ -37,6 +39,8 @@ public class _09_Weight : MGManager
     public override void MGStart()
     {
         int chose = Unityls.Rand(0, maxBowls);
+
+        // choose bowl layout
         for (int i = 0; i < maxBowls; i++)
         {
             if (i != chose)
@@ -46,6 +50,7 @@ public class _09_Weight : MGManager
             }
         }
 
+        // find the heavy and light bowl
         heavyBowl = GameObject.Find("ItemHeavy_"+chose).GetComponent<HeavyItemWeight>();
         lightBowl = GameObject.Find("ItemLight_"+chose).GetComponent<LightItemWeight>();
 
@@ -69,10 +74,12 @@ public class _09_Weight : MGManager
     {
         switch (state)
         {
+            // Choosing
             case STT.CHOOSE:
             {
                 if (ClickedBowl())
                 {
+                    // Get the user's choice
                     if (heavyBowl.HasClicked)
                     {
                         weight = WEIGHT.HEAVY;
@@ -82,13 +89,15 @@ public class _09_Weight : MGManager
                         weight = WEIGHT.LIGHT;
                     }
                     bowl = (BOWL)heavyBowl.type;
-                    Destroy(GameObject.Find("Choose"));
+                    Destroy(GameObject.Find("Choose")); // hide text
                     state = STT.DECIDE_ANIM;
                 }
                 break;
             }
+            // Play heavier bowl animation
             case STT.DECIDE_ANIM:
             {
+                // Play animation depending where the heavy bowl is
                 if (bowl == BOWL.LEFT)
                 {
                     scaler.Play("Left");
@@ -101,12 +110,14 @@ public class _09_Weight : MGManager
                 }
                 else
                 {
+                    // uhh PUNISHMENT TIME PROGRAMMER
                     Debug.Log("error. screwing you over.");
                     weight = WEIGHT.LIGHT;
                     state = STT.RESULT;
                 }
                 break;
             }
+            // rWait for heavier bowl animation
             case STT.ANIM:
             {
                 if (PassedTime(1.2f))
@@ -115,13 +126,16 @@ public class _09_Weight : MGManager
                 }
                 break;
             }
+            // Result!!!
             case STT.RESULT:
             {
+                // If we chose the heavy bowl, we win!
                 if (weight == WEIGHT.HEAVY)
                 {
                     scaler.Play("Correct");
                     WonEndMG();
                 }
+                // If we chose the light bowl, we lose :(
                 else
                 {
                     scaler.Play("Incorrect");
