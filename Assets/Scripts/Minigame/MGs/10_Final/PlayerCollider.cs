@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class PlayerCollider : MonoBehaviour
 {
+    // OLD!!!!!
+    // Use Simple collision listener insead.
+
     public GameObject Collided;
     public GameObject Triggered;
 
