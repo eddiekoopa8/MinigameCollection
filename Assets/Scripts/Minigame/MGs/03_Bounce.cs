@@ -16,9 +16,11 @@ public class _03_Tennis : MGManager
         body = GameObject.Find("Main").GetComponent<Rigidbody2D>();
         sprite = GameObject.Find("Main").GetComponent<SpriteRenderer>();
         enemies = new Rigidbody2D[ENEMY_COUNT];
+
+        // Get enemies
         for (int i = 0; i < ENEMY_COUNT; i++)
         {
-            enemies[i] = GameObject.Find("BadGuy"+(i+1)).GetComponent<Rigidbody2D>();
+            enemies[i] = GameObject.Find("BadGuy"+(i+1/*why did i do this*/)).GetComponent<Rigidbody2D>();
         }
         killed = 0;
     }
@@ -33,15 +35,19 @@ public class _03_Tennis : MGManager
             {
                 continue;
             }
+            // If we bounced off something solid.
             if (body.velocity.y == 0 || body.IsTouching(enemy.gameObject.GetComponent<Collider2D>()))
             {
-
+            // Bounce!
                 Vector3 v = body.velocity;
                 v.y = YSPEED;
                 body.velocity = v;
                 //body.velocity = Vector2.up * 40;
+
+                // If it was an enemy
                 if (body.IsTouching(enemy.gameObject.GetComponent<Collider2D>()))
                 {
+                    // We got one!
                     Destroy(enemy.gameObject);
                     PlayMGWorldSound("EnemyHit");
                     killed++;
@@ -49,6 +55,7 @@ public class _03_Tennis : MGManager
             }
         }
 
+        // Move with arrow keys
         if (Input.GetKey(KeyCode.LeftArrow))
         {
             Vector3 v = body.velocity;
@@ -65,6 +72,7 @@ public class _03_Tennis : MGManager
             //body.velocity = Vector2.right * 10;
             sprite.flipX = false;
         }
+        // Not moving
         else
         {
             Vector3 v = body.velocity;
@@ -72,8 +80,10 @@ public class _03_Tennis : MGManager
             body.velocity = v;
         }
 
+        // Enemy animations
         foreach (Rigidbody2D enemy in enemies)
         {
+            // Null check
             if (enemy.IsDestroyed() || !enemy)
             {
                 continue;
@@ -84,6 +94,7 @@ public class _03_Tennis : MGManager
             }
         }
 
+        // We won if we killed them all.
         if (killed >= ENEMY_COUNT)
         {
             WonEndMG();
