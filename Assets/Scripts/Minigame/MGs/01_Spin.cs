@@ -17,10 +17,14 @@ public class _01_Spin : MGManager
     bool Stop;
     public override void MGStart()
     {
+        // Get transform for rotation
         WheelRotate = GameObject.Find("WheelTarget").transform;
+
+        // Get hitboxes
         InputCollision = GameObject.Find("WheelTarget").GetComponent<BoxCollider2D>();
         StopCollision = GameObject.Find("StopTarget").GetComponent<BoxCollider2D>();
 
+        // get expressions
         NormalExp = GameObject.Find("WheelExpressionNormal").GetComponent<SpriteRenderer>();
         FailExp = GameObject.Find("WheelExpressionFail").GetComponent<SpriteRenderer>();
         SuccessExp = GameObject.Find("WheelExpressionSuccess").GetComponent<SpriteRenderer>();
@@ -37,31 +41,36 @@ public class _01_Spin : MGManager
 
         bool touching = InputCollision.IsTouching(StopCollision);
 
+        // Either enter or space pressed
         if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Space))
         {
-            Debug.Log("STOP!!");
+            //Debug.Log("STOP!!");
             Stop = true;
         }
 
-        NormalExp.enabled = !Stop;
-        FailExp.enabled = !touching && Stop;
-        SuccessExp.enabled = touching && Stop;
+        // Enable expressions depending on state
+        NormalExp.enabled = !Stop; // Normal expression if wheel is moving
+        FailExp.enabled = !touching && Stop; // Sad expression if wheel has stopped and is not touching arrow
+        SuccessExp.enabled = touching && Stop; // Happy expression if wheel has stopped and is touching arrow
 
         if (Stop)
         {
             if (touching)
             {
+                // You're winner!
                 PlayMGWorldSound("PickupCoin");
                 WonEndMG();
             }
             else
             {
+                // You lose...
                 PlayMGWorldSound("HitHurt");
                 LostEndMG();
             }
         }
         else
         { 
+            // Rotate based on delta time
             WheelRotate.Rotate(new Vector3(0, 0, Time.deltaTime * 150));
         }
     }
