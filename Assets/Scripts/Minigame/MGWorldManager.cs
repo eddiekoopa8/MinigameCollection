@@ -154,7 +154,9 @@ public class MGWorldManager : MonoBehaviour
         MGRootHandle = null;
         MGHandleID = -1;
 
+        // get ID
         MGHandleID = scnIndex + MINIGAME_INDEX_START;
+        // async load
         MGLoadAsync = SceneManager.LoadSceneAsync(MGHandleID, LoadSceneMode.Additive);
         isLoadingMG = true;
     }
@@ -176,13 +178,16 @@ public class MGWorldManager : MonoBehaviour
 
     void finaliseLoad()
     {
+        // Get handle (scene) by ID
         MGSceneHandle = SceneManager.GetSceneByBuildIndex(MGHandleID);
 
+        // Get all of the reaquired objects
         MGRootHandle = GetMGObject("MGRoot");
         MGRootHandle.GetComponent<MGManager>().MGActive = false;
         MGRootHandle.GetComponent<MGManager>().MGWorld = this;
         MGRootHandle.GetComponent<FadeObject>().FadeAlpha = 0;
 
+        // Disable debugging camera
         MGCamera = GetMGObject("MGCam").GetComponent<Camera>();
         MGCamera.enabled = false;
 
@@ -213,6 +218,7 @@ public class MGWorldManager : MonoBehaviour
         return isUnloadingMG;
     }
 
+    // unused
     void appendMGScale(float scale)
     {
         Vector3 v = MGRootHandle.transform.localScale;
@@ -238,6 +244,7 @@ public class MGWorldManager : MonoBehaviour
         isLoadingMG = false;
         MainCountdown = new Core.Timer();
 
+        // reset anims
         WinLoseAnim = GameObject.Find("WinLose_Anim").GetComponent<Animator>();
         WinLoseAnim.Play("_", -1, 1);
 
@@ -247,6 +254,7 @@ public class MGWorldManager : MonoBehaviour
         BombAnim = GameObject.Find("BombAnim").GetComponent<Animator>();
         BombAnim.Play("Count", -1, 1);
 
+        // get text
         NextMGAnimNumber = new TMP_Text[2];
         for (int i = 0; i < NextMGAnimNumber.Length; i++)
         {
@@ -257,7 +265,8 @@ public class MGWorldManager : MonoBehaviour
         {
             NextMGAnimDesc[i] = GameObject.Find("NextMG_Anim_MGDesc" + i).GetComponent<TMP_Text>();
         }
-        
+
+        // get hearts
         MGHearts = new MGHeart[MG_LIVE_COUNT];
         for (int i = 0; i < MGHearts.Length; i++)
         {
@@ -273,6 +282,7 @@ public class MGWorldManager : MonoBehaviour
         //MGHeartContainer_oldPos = MGHeartContainer.transform.position;
 
         // C# 9.0 why do you make me do this
+        // set mingiame names
         mgNames = new string[10];
         mgNames[0] = "Wheel";
         mgNames[1] = "Tennis";
@@ -284,19 +294,28 @@ public class MGWorldManager : MonoBehaviour
         mgNames[7] = "Collect";
         mgNames[8] = "Hide";
         mgNames[9] = "Adventure";
-        
+
+        // temporary solutioin to sound
+        // get sound collection
         tempSounds = GameObject.Find("ColinBBSound");
     }
 
     int MGIndex = 0;
     void LoadMG()
     {
+        // reset anim
         BombAnim.Play("Count", -1, 1);
+
+        // last minigame flag for 10th minigame
         if (MGIndex >= 9)
         {
             LastMinigame = true;
         }
+
+        // load MG scene
         loadMinigame(LastMinigame ? MGIndex : MGIndex++);
+
+        // set text
         for (int i = 0; i < NextMGAnimNumber.Length; i++)
         {
             NextMGAnimNumber[i].text = LastMinigame ? "Final" : MGIndex.ToString();
@@ -363,15 +382,16 @@ public class MGWorldManager : MonoBehaviour
                 }
             case STT.LOAD_FIRST_MINIGAME:
                 {
+                    // Load minigame if we aren't loading.
                     if (!IsMGLoading() && !HasMGLoaded())
                     {
                         //Debug.Log("Loading...");
                         LoadMG();
                     }
-
+                    // If we loaded minigame
                     if (!IsMGLoading() && HasMGLoaded())
                     {
-
+                        // Play next minigame animation
                         //Debug.Log("Loaded!");
                         state = STT.NEXT_MINIGAME;
 
@@ -381,18 +401,22 @@ public class MGWorldManager : MonoBehaviour
                     break;
                 }
             case STT.NEXT_MINIGAME:
-                {
+                {    
+                    // Free cursor
                     Cursor.lockState = CursorLockMode.None;
                     Cursor.visible = true;
+
+                    // After animaiton
                     if (NextMGAnim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1)
                     {
+                        // Activate minigame
                         MGRootHandle.GetComponent<FadeObject>().FadeAlpha = 255;
                         MGRootHandle.GetComponent<MGManager>().MGActive = true;
 
                         if (!LastMinigame) BombAnim.Play("Count", -1, 0);
 
                         state = STT.MINIGAME;
-                        InvisibleLives();
+                        InvisibleLives(); // hide lives
                     }
                     break;
                 }
@@ -406,41 +430,51 @@ public class MGWorldManager : MonoBehaviour
 #else
                     bool debugClick = false;
 #endif
+                    // If we exited minigame or bomb ticked
                     if ((!LastMinigame && BombFinished()) || debugClick || (Request & MG_REQ.FORCE_TERMINATE) != 0)
                     {
                         if (debugClick)
                         {
                             Request = MG_REQ.WON;
                         }
+                        // Goodbye minigame
                         UnloadCurrentMG();
+
+                        // show lives
                         VisibleLives();
 
+                        // Won
                         if ((Request & MG_REQ.WON) != 0)
                         {
                             WinLoseAnim.Play("Won", -1, 0);
-                            if (LastMinigame) Completed = true;
+                            if (LastMinigame) Completed = true; // completed if it was the last one
                             PlaySound("MGWon");
                         }
                         else
+                        // Lost
                         {
                             WinLoseAnim.Play("Lost", -1, 0);
-                            LoseLife();
+                            LoseLife(); // lose life (uh oh)
                             PlaySound("MGLost");
                         }
 
+                        // Load new minigame and wait for animation
                         state = STT.AFTER_MINIGAME;
                         Cursor.lockState = CursorLockMode.None;
                         Cursor.visible = true;
                     }
                     break;
                 }
+            // derived from LOAD_FIRST_MINIGAME
             case STT.AFTER_MINIGAME:
                 {
+                    // Stop if currently unloading
                     if (IsCurrentMGUnloading())
                     {
                         break;
                     }
 
+                    // Load new minigame
                     if (!IsMGLoading() && !HasMGLoaded())
                     {
                         //Debug.Log("Loading...");
@@ -448,13 +482,15 @@ public class MGWorldManager : MonoBehaviour
                         LoadMG();
                     }
 
+                    // If loaded minigame and played result animation
                     if (((!IsMGLoading() && HasMGLoaded()) || Completed) && WinLoseAnim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1)
                     {
-                        
+                        // if we completed, goto success screen
                         if (Completed)
                         {
                             BBInternal.SCENEManager.ChangeScene("Scenes/Complete");
                         }
+                        // if we have no lives, goto gameover screen
                         else if (MGLives <= 0)
                         {
                             BBInternal.SCENEManager.ChangeScene("Scenes/GameOver");
@@ -474,8 +510,10 @@ public class MGWorldManager : MonoBehaviour
                 }
         }
 
+        // old
         //appendMGScale(1);
 
+        /* DEBUG LOGS*/
         /*if (prevState != state)
         {
             Debug.Log("Switch STT: " + prevState + " -> " + state + "\n");
