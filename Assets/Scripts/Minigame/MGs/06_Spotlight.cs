@@ -31,6 +31,8 @@ public class _06_Spotlight : MGManager
         flipX = !flipX;
         if (flipX) flipY = !flipY;
         spotlight = GameObject.Find("spotlight").GetComponent<Collider2D>();
+
+        // get guy
         guy = GameObject.Find("guy").GetComponent<Rigidbody2D>();
         guyCollider = GameObject.Find("guy").GetComponent<SimpleCollisionListener>();
         GameObject.Find("spotlight").SetActive(true);
@@ -39,21 +41,29 @@ public class _06_Spotlight : MGManager
     // Update is called once per frame
     public override void MGUpdate()
     {
+        // hide cursor and lock it to game window
+        // (is reverted back by MG world)
+
         Cursor.lockState = CursorLockMode.Confined;
         Cursor.visible = false;
+
+        // Set spotlight position to mouse
         Vector3 pos = Input.mousePosition;
-        pos.z += 1000;
+        pos.z += 1000; // some layer fix
         spotlight.gameObject.transform.position = Camera.main.ScreenToWorldPoint(pos);
-        
+
+        // If guy is in spotlight, we won!
         if (guyCollider.Has("spotlight"))
         {
             WonMG();
         }
+        // Or we lose.
         else
         {
             LostMG();
         }
 
+        // guy moves zig zag pattern
         if (guyCollider.Has("up"))
         {
             guyYDirection = YDIRECTION.DOWN;
@@ -70,7 +80,8 @@ public class _06_Spotlight : MGManager
         {
             guyXDirection = XDIRECTION.LEFT;
         }
-        
+
+        // Guy moving
         guy.transform.SetPositionAndRotation(guy.transform.position + (Vector3.up * (float)((int)guyYDirection) / 5), guy.transform.rotation);
         guy.transform.SetPositionAndRotation(guy.transform.position + (Vector3.right * (float)((int)guyXDirection) / 5), guy.transform.rotation);
     }
