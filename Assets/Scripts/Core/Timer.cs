@@ -48,6 +48,7 @@ namespace Core
             {
                 return;
             }
+            // Tick based on delta time
             cur += Time.deltaTime * 1000;
             limit();
         }
@@ -73,6 +74,7 @@ namespace Core
             {
                 return;
             }
+            // Based on fixed delta time
             cur += Time.fixedDeltaTime * 1000;
             limit();
         }
