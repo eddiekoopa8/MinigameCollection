@@ -23,11 +23,14 @@ public class ButtonForUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHan
     void Update()
     {
         AnimatorStateInfo info = anim.GetCurrentAnimatorStateInfo(0);
+        // if clicked anim ended
         if (clicking && info.normalizedTime >= clickEnd)
         {
-            Debug.Log("Click request!");
+            // send request
+            //Debug.Log("Click request!");
             clicked = true;
         }
+        // clicking flag
         clicking = info.IsName("Click") && info.normalizedTime < clickEnd;
     }
     public void ResetState()
