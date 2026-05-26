@@ -6,6 +6,9 @@ namespace Core
 {
     public class SimpleCollisionListener : MonoBehaviour
     {
+        // This used to support mutliple collisions, but was causing conflicts
+        // and was doing multiple list adding/removing  requests at once.
+
         /* List<*/Collider2D/*>*/ Triggered;
         /* List<*/Collider2D/*>*/ Collided;
 
@@ -30,6 +33,7 @@ namespace Core
                 }
             });
             return r;*/
+            // Check for name (but check if NULL first, to avoid exceptions)
             return Triggered && Triggered.name == name;
         }
 
@@ -44,11 +48,13 @@ namespace Core
                  }
              });
              return r;*/
+            // Check for name (but check if NULL first, to avoid exceptions)
             return Collided && Collided.name == name;
         }
 
         public bool Has(string name)
         {
+            // Check both collided and triggered
             return HasTriggered(name) ? true : HasCollided(name);
         }
 
@@ -63,6 +69,7 @@ namespace Core
                 }
             });
             return r;*/
+            // Check for tag (but check if NULL first, to avoid exceptions)
             return Triggered && Triggered.CompareTag(name);
         }
 
@@ -77,11 +84,13 @@ namespace Core
                  }
              });
              return r;*/
+            // Check for tag (but check if NULL first, to avoid exceptions)
             return Collided && Collided.CompareTag(name);
         }
 
         public bool HasTag(string name)
         {
+            // Check both collided and triggered
             return HasTriggeredTag(name) ? true : HasCollidedTag(name);
         }
 
@@ -95,6 +104,7 @@ namespace Core
             //Debug.Log(gameObject.name + " is listening!");
         }
 
+        // TRIGGER EVENTS
         private void OnTriggerStay2D(Collider2D collider)
         {
             /*Triggered.ForEach(delegate (Collider2D entry)
@@ -124,6 +134,7 @@ namespace Core
             Triggered = null;
         }
 
+        // COLLISION EVENTS
         private void OnCollisionStay2D(Collision2D collision)
         {
             /*Collider2D collider = collision.collider;
