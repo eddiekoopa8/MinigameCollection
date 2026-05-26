@@ -1,4 +1,8 @@
+// only enable on editor.
 #define DISABLE
+
+// from https://github.com/FinlayTheBerry/Unity2DPixelPerfectCollider/blob/master/PixelCollider2D.cs
+
 #if !DISABLE
 
 // Select how you would like to handle unreadable textures by uncommenting one of the following #define statements:
