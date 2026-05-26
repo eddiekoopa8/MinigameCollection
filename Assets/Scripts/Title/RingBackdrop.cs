@@ -12,7 +12,9 @@ public class RingBackdrop : MonoBehaviour
     void prepAnim()
     {
         time.Reset();
+        // random wait time
         time.SetMaximumInMilliseconds(Unityls.Rand(Unityls.Rand(2000, 3000) /* sure */, 6000));
+        // random position
         Vector3 pos = new Vector3(Unityls.Rand(-(boundaryX), (boundaryX)), Unityls.Rand(-(boundaryY), (boundaryY)), 0);
         transform.localPosition = pos;
     }
@@ -26,9 +28,11 @@ public class RingBackdrop : MonoBehaviour
 
     void Update()
     {
+        // tick timer
         time.Tick();
         if (time.Reached)
         {
+            // play anim and reset pos when reached
             prepAnim();
             anim.Play("Ring", -1, 0);
         }
