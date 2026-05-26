@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+//. partially derived from minigame 6
+
 public class _07_Coin : MGManager
 {
     Rigidbody2D guy;
@@ -39,8 +41,10 @@ public class _07_Coin : MGManager
     // Update is called once per frame
     public override void MGUpdate()
     {
+        // guy moves automatically FOREVER
         guy.velocity = new Vector2(definedSpeed * (int)guyXDirection, definedSpeed * (int)guyYDirection);
 
+        // We won if we collected them all
         if (coins >= COIN_COUNT)
         {
             WonEndMG();
@@ -56,6 +60,7 @@ public class _07_Coin : MGManager
         /*guy.transform.SetPositionAndRotation(guy.transform.position + (Vector3.up * (float)((int)guyYDirection) / 2), guy.transform.rotation);
         guy.transform.SetPositionAndRotation(guy.transform.position + (Vector3.right * (float)((int)guyXDirection) / 2), guy.transform.rotation);*/
 
+        Arrow keys changes direction
         if (Input.GetKeyDown(KeyCode.UpArrow))
         {
             guyYDirection = YDIRECTION.UP;
@@ -76,8 +81,11 @@ public class _07_Coin : MGManager
             guyYDirection = YDIRECTION.NONE;
             guyXDirection = XDIRECTION.RIGHT;
         }
+
+        // god
         guy.gameObject.GetComponent<SpriteRenderer>().flipX = guyXDirection == XDIRECTION.RIGHT ? true : false;
 
+        // if guy got coin
         if (guyCollider.Has("Coin"))
         {
             Destroy(guyCollider.GetTriggered());
