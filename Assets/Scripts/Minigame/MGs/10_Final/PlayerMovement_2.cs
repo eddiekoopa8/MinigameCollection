@@ -2,8 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// would be better if i did a namespace
 public class PlayerMovement_2 : BB.PhysicsObject
 {
+    // Same as PlayerMovement, but this time there are options to disable jumping and horizontal movement.
+    // (TODO: replace the old PlayerMovement with this)
+
     static float speed = 15f;
     static float jumpspeed = 25.5f;
 
