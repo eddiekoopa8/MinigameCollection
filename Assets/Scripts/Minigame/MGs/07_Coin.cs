@@ -60,7 +60,7 @@ public class _07_Coin : MGManager
         /*guy.transform.SetPositionAndRotation(guy.transform.position + (Vector3.up * (float)((int)guyYDirection) / 2), guy.transform.rotation);
         guy.transform.SetPositionAndRotation(guy.transform.position + (Vector3.right * (float)((int)guyXDirection) / 2), guy.transform.rotation);*/
 
-        Arrow keys changes direction
+        // Arrow keys changes direction
         if (Input.GetKeyDown(KeyCode.UpArrow))
         {
             guyYDirection = YDIRECTION.UP;

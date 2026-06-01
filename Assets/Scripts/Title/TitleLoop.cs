@@ -133,7 +133,7 @@ public class TitleLoop : MonoBehaviour
                 }
             case STATE.LOGO:
                 {
-                    myTimer.Tick()
+                    myTimer.Tick();
                     if (myTimer.Reached)
                     {
                         myTimer.Reset();

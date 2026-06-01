@@ -205,7 +205,7 @@ public class _10_Spin : MGManager
             }
 
             // If player survived, we move on to the next stage!
-            if (anim >= 5 || /*Input.GetKeyDown(KeyCode.P)*/)
+            if (anim >= 5 /*|| Input.GetKeyDown(KeyCode.P)*/)
             {
                 bombAnim.Play("BombDo", -1, 1);
                 End();
