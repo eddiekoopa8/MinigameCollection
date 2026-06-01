@@ -91,6 +91,8 @@ public class TitleLoop : MonoBehaviour
     TitleScn mainMenuScene;
     TitleScn readyScene;
 
+    Animator menuAnim;
+
     void Start()
     {
         myTimer = new Core.Timer();
@@ -113,6 +115,8 @@ public class TitleLoop : MonoBehaviour
 
         mainMenuScene.FindButton("FromMainMenuToTitle");
         mainMenuScene.FindButton("Start");
+
+        menuAnim = GameObject.Find("Canvas").GetComponent<Animator>();
     }
 
     void Update()
@@ -182,6 +186,8 @@ public class TitleLoop : MonoBehaviour
                                 else if (titleScene.ClickedOnButton("Options"))
                                 {
                                     // TODO
+                                    menuAnim.Play("TitleToOption", -1, 0);
+                                    titleState = TITLE_STATE.OPTION;
                                 }
                                 else if (titleScene.ClickedOnButton("Exit"))
                                 {
@@ -225,7 +231,7 @@ public class TitleLoop : MonoBehaviour
                 }
             case STATE.MAIN_MENU:
                 {
-                    if (mainMenuScene.ClickedOnButton("FromMainMenuToTitle"))
+                    if (mainMenuScene.ClickedOnButton("Back"))
                     {
                         titleScene.instance.SetActive(true);
 
